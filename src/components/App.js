@@ -30,11 +30,14 @@ const App = ({locale,fetchAllCategories,fetchAllCustomers, fetchAllItems}) => {
             <Route exact path="/" render={() => {
               return <CategoryList />
             }} />
-            <Route exact path="/customer" render={() => {
-              return <CustomerList />
+            <Route exact path="/categories" render={() => {
+              return <CategoryList />
             }} />
             <Route exact path="/items" render={() => {
               return <ItemList />
+            }} />
+            <Route exact path="/customer" render={() => {
+              return <CustomerList />
             }} />
           </Box>
         </Box>

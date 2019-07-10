@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { makeStyles } from '@material-ui/core/styles'
 import { Box, List, ListItem, ListItemText, ListItemIcon, Divider} from '@material-ui/core'
 import {
     Photo as PhotoIcon, 
@@ -9,26 +10,40 @@ import {
     Accessibility as AccessibilityIcon
 } from '@material-ui/icons'
 import './style.css'
+import { Link } from 'react-router-dom'
+
+const useStyles = makeStyles(theme => ({
+  link: {
+    textDecoration: "none",
+    color: theme.palette.primary.main
+  },
+}))
+
 const CategoryList = ({ categories, setCategoryId, handleDrawerClose }) => {
+  const classes = useStyles()
   return (
     <React.Fragment>
       <List>
-        <ListItem button className="icon">
-          <ListItemIcon ><BrushIcon /></ListItemIcon>
-          <ListItemText>
-            <Box>
-              Artists
-            </Box>
-          </ListItemText>
-        </ListItem>
-        <ListItem button className="icon">
-         <ListItemIcon><PhotoIcon /></ListItemIcon>
-          <ListItemText>
-            <Box>
-              Artworks
-            </Box>
-          </ListItemText>
-        </ListItem>
+        <Link to = '/categories' className={classes.link}>
+          <ListItem button className="icon">
+            <ListItemIcon ><BrushIcon /></ListItemIcon>
+            <ListItemText>
+              <Box>
+                Artists
+              </Box>
+            </ListItemText>
+          </ListItem>
+        </Link>
+        <Link to = '/items' className={classes.link}>
+          <ListItem button className="icon">
+           <ListItemIcon><PhotoIcon /></ListItemIcon>
+            <ListItemText>
+              <Box>
+                Artworks
+              </Box>
+            </ListItemText>
+          </ListItem>
+          </Link>
       </List>
       <Divider />
       <List>
