@@ -1,61 +1,136 @@
-//import axios from 'axios'
-//import { URL_GET_ALL_CATEGORIES } from '../constants'
+import axios from 'axios';
+import { URL_GET_ALL_CATEGORIES, URL_POST_CATEGORY, URL_PUT_CATEGORY , URL_DELETE_CATEGORY} from '../constants';
+import format from 'string-format';
 
 const initialState = {
   alreadyFetched: false,
   rows: []
-}
+};
 
 //=============================================================================
-//　Reducer
+//Reducer
 //=============================================================================
 export const categoriesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'SET_ALREADY_FETCHED':
+    case 'CATEGORY_SET_ALREADY_FETCHED':
       return {
         ...state,
         alreadyFetched: true
-      }
-    case 'FETCH_CATEGORIES_DONE':
+      };
+    case 'CATEGORY_FETCH_ROWS_DONE':
       return {
         ...state,
         rows: action.payload
-      }
+      };
+    case 'CATEGORY_POST_DONE':
+      return {
+        ...state,
+        rows: [...state.rows, action.payload]
+      };
+    case 'CATEGORY_PUT_DONE':
+      return _category_put_done(state, action);
+    case 'CATEGORY_DELETE_DONE':
+      return _category_delete_done(state, action);
     default:
-      return state
+      return state;
   }
-}
+};
+
+const _category_put_done = (state, action) => {
+  const newRows =  [];
+  for (const row of state.rows) {
+    if (row.id === action.payload.id) {
+      //updated row
+      newRows.push(action.payload);
+    }
+    else {
+      newRows.push(row);
+    }
+  }
+  
+  return {
+    ...state,
+    rows: newRows
+  };
+};
+
+const _category_delete_done = (state, action) => {
+  const newRows =  [];
+  for (const row of state.rows) {
+    if (row.id !== action.payload) {
+      newRows.push(row);
+    }
+  }
+  
+  return {
+    ...state,
+    rows: newRows
+  };
+};
 
 //=============================================================================
-//　ActionCreators
+//ActionCreators
 //=============================================================================
-export const fetchAllCategories = () => {
+
+
+export const saveCategory = (category) => {
+  return async (dispatch, getState) => {
+    if (!category.id) {
+      //insert
+      const axRes = await axios.post(URL_POST_CATEGORY, {name: category.name});
+      console.log('axRes.data.data is :', axRes.data.data);
+      dispatch({
+        type: 'CATEGORY_POST_DONE',
+        payload: axRes.data.data
+      });
+    }
+    else {
+      //update
+      const url = format(URL_PUT_CATEGORY, category.id);
+      const axRes = await axios.put(url, {name: category.name});
+      console.log('PUT_URL is ', url);
+      console.log('axRes.data.data is :', axRes.data.data);
+      dispatch({
+        type: 'CATEGORY_PUT_DONE',
+        payload: axRes.data.data
+      });
+    }
+  };
+};
+
+export const deleteCategory = (category) => {
   return async (dispatch, getState) => {
     
+      //delete
+      const url = format(URL_DELETE_CATEGORY, category.id);
+      await axios.delete(url);
+      //console.log('axRes.data.data is :', axRes.data.data)
+      dispatch({
+        type: 'CATEGORY_DELETE_DONE',
+        payload: category.id
+      });
+    
+  };
+};
+
+export const fetchAllCategories = () => {
+  return async (dispatch, getState) => {
     if (getState().categories.alreadyFetched) {
-        return
+        return;
     }
 
     dispatch({
-        type: 'SET_ALREADY_FETCHED'
-    })
+        type: 'CATEGORY_SET_ALREADY_FETCHED'
+    });
 
-    //const axRes = await axios.get(URL_GET_ALL_CATEGORIES)
-    const axRes = {
-      data: {
-        data: [
-          {id: 1, name: "categoryA"},
-          {id: 2, name: "categoryB"},
-          {id: 3, name: "categoryC"},
-          {id: 4, name: "categoryD"},
-          {id: 5, name: "categoryE"},
-        ]
-      }
-    }
+    // const axRes = await axios.get(URL_GET_ALL_CATEGORIES)
+    const url = format(URL_GET_ALL_CATEGORIES, getState().categories.rows.length);
+    const axRes = await axios.get(url);
+    console.log(axRes.data);
 
     dispatch({
-      type: 'FETCH_CATEGORIES_DONE',
+      type: 'CATEGORY_FETCH_ROWS_DONE',
       payload: axRes.data.data
-    })
-  }
-}
+    });
+  };
+};
