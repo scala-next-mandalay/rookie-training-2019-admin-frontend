@@ -1,18 +1,14 @@
 import { connect } from 'react-redux';
 import ItemList from '../components/ItemList';
 import { deleteItem,saveItem,setCategoryId,fetchAllItems } from '../modules/items';
-
 import { uploadImage } from '../modules/image';
 
 const _getItemsByCategory = (rows, categoryId) => {
-
   if (categoryId <= 0) {
     return rows;
   }
   else {
-
     const newRows = rows.filter(t => t.category_id === Number(categoryId));
-    console.log('_getItemsByCategory2', newRows);
     return newRows;
   }
 };

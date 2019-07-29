@@ -139,8 +139,6 @@ export const signOut = () => {
 
     try {
       await Auth.signOut();
-      
-      console.log('################################SIGNOUT')
     }
     catch(err) {
       dispatch({
