@@ -133,13 +133,15 @@ export const fetchAllItems = () => {
   return async (dispatch, getState) => {
     
     
-    /*if (getState().items.alreadyFetched) {
+    if (getState().items.alreadyFetched) {
       return
     }
     
     dispatch({
       type: 'ITEM_SET_ALREADY_FETCHED'
-    })*/
+    })
+    
+    console.log('fetchAllItems', getState().items.rows.length);
     
     const url = format(URL_GET_ALL_ITEMS, getState().items.rows.length);
     const axRes = await axios.get(url);

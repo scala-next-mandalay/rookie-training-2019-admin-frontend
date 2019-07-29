@@ -4,6 +4,9 @@ import clsx from 'clsx';
 import { lighten,makeStyles } from '@material-ui/core/styles';
 import {Tabs,Tab,Typography,Box,TableHead,TableRow,TableCell,TableSortLabel,Grid,Toolbar,TextField,Paper,Table,TableBody,TablePagination} from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import OrderItemList from '../components/OrderItemList';
+
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -171,13 +174,20 @@ const useToolbarStyles = makeStyles(theme => ({
   },
 }));
 
-const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItems}) => {
+const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItems,fetchAllOrders, orderItems}) => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  
+  const isFirstRef = React.useRef(true);
+  React.useEffect(() => {
+    if (isFirstRef.current) {
+      fetchAllOrders();
+    }
+  });
 
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === 'desc';
@@ -293,8 +303,8 @@ const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItem
         />
         </div>
   );
-
-  return (
+  
+  const OrderList = (
     <Paper className={classes.paper}>
       <Grid container>
         <Grid item xs={12} sm={12} className={classes.gridControlPanel}>
@@ -324,6 +334,9 @@ const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItem
       </Grid>
       </Paper>
   );
+  
+
+  return (orderItems === null) ? {OrderList} : <orderItems />
 };
 
 export default OrderList;

@@ -15,6 +15,8 @@ const initialState = {
 //=============================================================================
 
 export const authReducer = (state = initialState, action) => {
+  
+  console.log('authReducer='+action.type, action.payload)
   switch (action.type) {
     case 'AUTH_SYSTEM_ERROR':
       return {
@@ -109,6 +111,7 @@ export const changeAuthState = (value) =>  ({
 
 export const fetchAuthedUser = () => {
   return async (dispatch, getState) => {
+    console.log('fetchAuthedUser');
     dispatch({
       type: 'AUTH_BEGIN_LOADING'
     });
@@ -136,6 +139,8 @@ export const signOut = () => {
 
     try {
       await Auth.signOut();
+      
+      console.log('################################SIGNOUT')
     }
     catch(err) {
       dispatch({

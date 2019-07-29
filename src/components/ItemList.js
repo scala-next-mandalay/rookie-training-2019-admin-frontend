@@ -354,7 +354,7 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
   const paperItems = [];
   for (const item of items) {
     paperItems.push(
-      <Grid item xs={12} sm={4} lg={3}>
+      <Grid key={item.id} item xs={12} sm={4} lg={3}>
         <Card className={classes.card}>
           <CardMedia
             className={classes.media}
@@ -405,7 +405,7 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
               >
               <option value="">All categories</option>
               {categories.map((category) => {
-                return (<option value={category.id}>{category.name}</option>);
+                return (<option key={category.id} value={category.id}>{category.name}</option>);
               })}
             </NativeSelect></Grid>
         <Grid item xs={12} sm={1} className={classes.gridControlPanel}>

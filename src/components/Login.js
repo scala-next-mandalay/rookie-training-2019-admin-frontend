@@ -8,16 +8,9 @@ import ConfirmSignUp from '../containers/auth/ConfirmSignUp';
 import ForgotPassword from '../containers/auth/ForgotPassword';
 import ForgotPasswordSubmit from '../containers/auth/ForgotPasswordSubmit';
 
-const Login = ({handleDrawerToggle, totalQuantity, authState, changeAuthState, fetchAuthedUser, signOut, user, loading, history}) => {
+const Login = ({handleDrawerToggle, totalQuantity, authState, changeAuthState, signOut, user, loading, history}) => {
 
-    const isFirstRef = React.useRef(true);
-    
-    React.useEffect(() => {
-      if (isFirstRef.current) {
-        isFirstRef.current = false;
-        fetchAuthedUser();
-      }
-    });
+ 
 
     const handleItem = event => {
       event.preventDefault();

@@ -16,26 +16,14 @@ import aws_exports from '../aws-exports';
 import Login from '../containers/Login';
 Amplify.configure(aws_exports);
 
-const App = ({locale,fetchAllCategories,fetchAllCustomers, fetchAllItems,fetchAllOrders,fetchAuthedUser, user, refreshToken}) => {
+const App = ({fetchAllCategories,　fetchAuthedUser, user}) => {
   const isFirstRef = React.useRef(true);
-  
   React.useEffect(() => {
     if (isFirstRef.current) {
       isFirstRef.current = false;
       fetchAuthedUser();
+      fetchAllCategories();
     }
-    //
-    //fetchAllCustomers()
-    fetchAllCategories();
-    fetchAllItems();
-    fetchAllOrders();
-    
-    const timer = window.setInterval(() => {
-      refreshToken();
-    }, 600000); //after 10 minutes to call refreshToken()
-    return () => { // Return callback to run on unmount.
-      window.clearInterval(timer);
-    };
   });
 
   const auth = (
@@ -80,10 +68,9 @@ const App = ({locale,fetchAllCategories,fetchAllCustomers, fetchAllItems,fetchAl
 };
 
 App.propTypes = {
-  fetchAllCategories: PropTypes.func,
-  fetchAllCustomers: PropTypes.func,
-  fetchAllItems: PropTypes.func,
-  fetchAllOrders: PropTypes.func,
+  fetchAllCategories: PropTypes.func.isRequired,
+  fetchAuthedUser: PropTypes.func.isRequired,
+  user: PropTypes.object,
 };
 
 export default App;

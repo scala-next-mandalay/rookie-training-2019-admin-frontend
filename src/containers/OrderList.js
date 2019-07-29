@@ -54,5 +54,6 @@ export default connect(
     fetchAllOrders: () => dispatch(fetchAllOrders()),
     clickOrderId :(orderId) => dispatch(clickOrderId(orderId)),
     fetchAllOrderItems: (id) => dispatch(fetchAllOrderItems(id)),
+
   })
 )(OrderList);

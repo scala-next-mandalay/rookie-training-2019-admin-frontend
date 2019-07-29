@@ -78,7 +78,6 @@ export const saveCategory = (category) => {
     if (!category.id) {
       //insert
       const axRes = await axios.post(URL_POST_CATEGORY, {name: category.name});
-      console.log('axRes.data.data is :', axRes.data.data);
       dispatch({
         type: 'CATEGORY_POST_DONE',
         payload: axRes.data.data
@@ -88,8 +87,6 @@ export const saveCategory = (category) => {
       //update
       const url = format(URL_PUT_CATEGORY, category.id);
       const axRes = await axios.put(url, {name: category.name});
-      console.log('PUT_URL is ', url);
-      console.log('axRes.data.data is :', axRes.data.data);
       dispatch({
         type: 'CATEGORY_PUT_DONE',
         payload: axRes.data.data
@@ -104,7 +101,6 @@ export const deleteCategory = (category) => {
       //delete
       const url = format(URL_DELETE_CATEGORY, category.id);
       await axios.delete(url);
-      //console.log('axRes.data.data is :', axRes.data.data)
       dispatch({
         type: 'CATEGORY_DELETE_DONE',
         payload: category.id
@@ -115,18 +111,20 @@ export const deleteCategory = (category) => {
 
 export const fetchAllCategories = () => {
   return async (dispatch, getState) => {
-    if (getState().categories.alreadyFetched) {
-        return;
+    console.log('fetchAllCategories')
+    /*if (getState().categories.alreadyFetched) {
+        //return;
     }
 
     dispatch({
         type: 'CATEGORY_SET_ALREADY_FETCHED'
-    });
+    });*/
 
     // const axRes = await axios.get(URL_GET_ALL_CATEGORIES)
     const url = format(URL_GET_ALL_CATEGORIES, getState().categories.rows.length);
     const axRes = await axios.get(url);
-    console.log(axRes.data);
+    
+    
 
     dispatch({
       type: 'CATEGORY_FETCH_ROWS_DONE',
