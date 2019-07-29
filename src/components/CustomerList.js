@@ -1,7 +1,7 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { makeStyles } from '@material-ui/core/styles'
-import { Box, Container, Paper, Grid, Radio, Button } from '@material-ui/core'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
+import { Box, Container, Paper, Grid, Radio, Button } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -16,13 +16,13 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
-}))
+}));
 
 const CustomerList = ({ customers }) => {
-  const [value, setValue] = React.useState(null)
-  const classes = useStyles()
+  const [value, setValue] = React.useState(null);
+  const classes = useStyles();
   
-  const paperItems = []
+  const paperItems = [];
   for (const customer of customers) {
     paperItems.push(
       <Grid item xs={6} sm={4} lg={3}>
@@ -47,7 +47,7 @@ const CustomerList = ({ customers }) => {
           </Box>
         </Paper>
       </Grid>
-    )
+    );
   }
   
   const paperControl = (
@@ -99,7 +99,7 @@ const CustomerList = ({ customers }) => {
       
       
     </Paper>
-  )
+  );
   
   return (
     <Container maxWidth="lg">
@@ -108,19 +108,17 @@ const CustomerList = ({ customers }) => {
         {paperItems}
       </Grid>
     </Container>
-  )
-  
+  );
 
-  
-}
+};
 
 const customerPropTypes = PropTypes.shape({
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
-})
+});
 
 CustomerList.propTypes = {
   customers: PropTypes.arrayOf(customerPropTypes.isRequired).isRequired,
-}
+};
 
-export default CustomerList
+export default CustomerList;

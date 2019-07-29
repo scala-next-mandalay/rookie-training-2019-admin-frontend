@@ -1,8 +1,9 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { makeStyles } from '@material-ui/core/styles'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
 import { Box, Container, Paper, Dialog, 
-DialogTitle,DialogContent, TextField, DialogActions ,Grid, Button } from '@material-ui/core'
+DialogTitle,DialogContent, TextField, DialogActions ,Grid, Button } from '@material-ui/core';
+import { validateForm } from '../util';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -17,90 +18,136 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
-}))
+  button:{
+    border: '1px solid gray',
+    backgroundColor: '#b0bec5',
+  },
+  diaction:{
+    marginRight:'17px',
+  }
+}));
 
-const CategoryList = ({ categories, category, saveCategory,deleteCategory }) => {
+const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
   // const [value, setValue] = React.useState(null)
-  const classes = useStyles()
-  const [dialogOpen, setDialogOpen] = React.useState(false)
-  const [selectedCategory, selectCategory] = React.useState(null)
-
-  const handleChangeValue = fieldName => event => {
-    const newCategory = {...selectedCategory}
-    newCategory[fieldName] =  event.target.value
-    //console.log(newCategory)
-    selectCategory(newCategory)
-  }
+  const classes = useStyles();
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [selectedCategory, setSelectedCategory] = React.useState(null);
+  const [isDelete, setIsDelete] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
+  const initialCategory = {id: null, name: ""};
   
-  const initialForm = {name: ""}
-  const handleEdit = (category = initialForm) => event => {
-    console.log('MYCATEGORY',category)
-    selectCategory(category)
-    setDialogOpen(true)
-  }
+  const handleChangeValue = fieldName => event => {
+    const newCategory = {...selectedCategory};
+    newCategory[fieldName] =  event.target.value;
+    //console.log(newCategory)
+    setSelectedCategory(newCategory);
+    //console.log(setSelectedCategory)
+  };
+  
+  const handleEdit = category => event => {
+    setSelectedCategory(category);
+    setDialogOpen(true);
+    setIsDelete(false);
+    setErrors({});
+  };
   
   const handleCloseDialog = () => {
-    setDialogOpen(false)
-  }
+    setDialogOpen(false);
+    setSelectedCategory(null);
+  };
+  
+  const validationSetting = {
+    isEmpty: ['name'],
+  };
   
   const handleSubmit = () => {
     if (selectedCategory) {
-      saveCategory(selectedCategory)
+      const errs = validateForm(validationSetting, selectedCategory);
+      if (errs) {
+        setErrors(errs);
+      }
+      else {
+        if (isDelete) {
+          console.log(selectedCategory);
+          deleteCategory(selectedCategory);
+        }
+        else {
+          saveCategory(selectedCategory);
+        }
+        handleCloseDialog();
+      }
     }
-    setDialogOpen(false)
-  }
-  
+  };
 
   const handleDelete = (category) => event => {
-    deleteCategory(category);
-  }
+    setSelectedCategory(category);
+    setDialogOpen(true);
+    setIsDelete(true);
+    setErrors({});
+  };
   
   
-  let dialog = null
-  if (selectedCategory) {
-    const idField = selectedCategory.id ? (
-      <TextField
-        autoFocus
-        margin="dense"
-        id="id"
-        label="ID"
-        value={selectedCategory.id}
-        onChange={handleChangeValue("id")}
-        fullWidth
-      />
-    ) : null
-    
-    
-    dialog = (
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Edit</DialogTitle>
-        <DialogContent>
-            {idField}
-          <TextField
-            autoFocus
-            id="name"
-            margin="dense"
-            label="Name"
-            value={selectedCategory.name}
-            onChange={handleChangeValue("name")}
-            fullWidth
-          />
-          
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-    )
-  }
-      
+  const deleteDialog = (selectedCategory && isDelete) ? (
+    <Dialog 
+      open={dialogOpen} 
+      onClose={handleCloseDialog} 
+      aria-labelledby="category-delete-dialog"
+      fullWidth
+      maxWidth="xs"
+    >
+      <DialogTitle id="category-delete-dialog">
+        {"Are you sure?"}
+      </DialogTitle>
+      <DialogContent>
+        <Box>Do you really want to delete {selectedCategory.id}: {selectedCategory.name}.</Box>
+        <Box fontWeight={600}></Box>
+      </DialogContent>
+      <DialogActions className={classes.diaction}>
+        <Button onClick={handleCloseDialog} color="primary" className={classes.button}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} color="primary" className={classes.button}>
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  ) : null;
 
-  const paperItems = []
+  const saveDialog = (selectedCategory && isDelete === false) ? (
+    <Dialog 
+      open={dialogOpen} 
+      onClose={handleCloseDialog} 
+      aria-labelledby="category-save-dialog"
+      fullWidth
+      maxWidth="xs"
+    >
+      <DialogTitle id="category-save-dialog" >
+        {selectedCategory.id ? "Edit (ID:"+selectedCategory.id+")" : "Create"}
+      </DialogTitle>
+      <DialogContent>
+        <TextField
+          variant="outlined"
+          autoFocus
+          error={errors.name ? true : false}
+          id="name"
+          label="Name"
+          value={selectedCategory.name}
+          onChange={handleChangeValue("name")}
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions className={classes.diaction}>
+        <Button onClick={handleCloseDialog} color="primary" className={classes.button}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} color="primary" className={classes.button}>
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+  ) : null;
+      
+  const paperItems = [];
   for (const category of categories) {
     paperItems.push(
       <Grid item xs={12} sm={4} lg={3}>
@@ -121,7 +168,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory }) => 
           </Box>
         </Paper>
       </Grid>
-    )
+    );
   }
   
   const paperControl = (
@@ -139,7 +186,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory }) => 
               variant="contained" 
               size="small" 
               color="secondary" 
-              onClick={handleEdit()}
+              onClick={handleEdit(initialCategory)}
             >
               Create
             </Button>
@@ -147,27 +194,30 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory }) => 
         </Grid>
       </Grid>
     </Paper>
-  )
+  );
   
   
   return (
-    <Container maxWidth="lg">
-      {paperControl}
-      <Grid container>
-        {paperItems}
-      </Grid>
-      {dialog}
-    </Container>
-  )
-  }
+    <React.Fragment>
+      <Container maxWidth="lg">
+        {paperControl}
+        <Grid container>
+          {paperItems}
+        </Grid>
+      </Container>
+      {saveDialog}
+      {deleteDialog}
+    </React.Fragment>
+  );
+  };
 
 const categoryPropTypes = PropTypes.shape({
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
-})
+});
 
 CategoryList.propTypes = {
   categories: PropTypes.arrayOf(categoryPropTypes.isRequired).isRequired,
-}
+};
 
-export default CategoryList
+export default CategoryList;

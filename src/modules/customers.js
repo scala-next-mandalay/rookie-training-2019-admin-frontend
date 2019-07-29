@@ -1,13 +1,13 @@
-//import axios from 'axios'
-//import { URL_GET_ALL_CUSTOMERS } from '../constants'
+//import axios from 'axios';
+//import { URL_GET_ALL_CUSTOMERS } from '../constants';
 
 const initialState = {
   alreadyFetched: false,
   rows: []
-}
+};
 
 //=============================================================================
-//　Reducer
+//Reducer
 //=============================================================================
 export const customersReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -15,30 +15,30 @@ export const customersReducer = (state = initialState, action) => {
       return {
         ...state,
         alreadyFetched: true
-      }
+      };
     case 'FETCH_CUSTOMERS_DONE':
       return {
         ...state,
         rows: action.payload
-      }
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 
 //=============================================================================
-//　ActionCreators
+//ActionCreators
 //=============================================================================
 export const fetchAllCustomers = () => {
   return async (dispatch, getState) => {
     
     if (getState().customers.alreadyFetched) {
-        return
+        return;
     }
 
     dispatch({
         type: 'SET_ALREADY_FETCHED'
-    })
+    });
 
     //const axRes = await axios.get(URL_GET_ALL_CUSTOMERS)
     const axRes = {
@@ -48,11 +48,11 @@ export const fetchAllCustomers = () => {
           {id: 2, name: "Aung Aung", phone:"09204604437",address:"Yangon"},
         ]
       }
-    }
+    };
 
     dispatch({
       type: 'FETCH_CUSTOMERS_DONE',
       payload: axRes.data.data
-    })
-  }
-}
+    });
+  };
+};

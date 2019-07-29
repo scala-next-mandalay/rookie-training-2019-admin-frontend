@@ -1,8 +1,8 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { makeStyles } from '@material-ui/core/styles'
-import { Box, AppBar, IconButton, Toolbar,Badge,Hidden } from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Menu'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
+import { Box, AppBar, IconButton, Toolbar,Badge,Hidden } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -26,10 +26,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const TitleBar = ({handleDrawerToggle}) => {
-  const classes = useStyles()
+const TitleBar = ({handleDrawerToggle, changeAuthState, fetchAuthedUser, signOut, user, history}) => {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const isFirstRef = React.useRef(true);
+  React.useEffect(() => {
+    if (isFirstRef.current) {
+      isFirstRef.current = false;
+      fetchAuthedUser();
+    }
+  });
+  
+  const handleLogout = event => {
+    event.preventDefault();
+    signOut();
+  };
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -85,19 +98,21 @@ const TitleBar = ({handleDrawerToggle}) => {
       >
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
       </Toolbar>
     </AppBar>
-  )
-}
+  );
+};
 
 TitleBar.propTypes = {
   handleDrawerToggle: PropTypes.func,
-}
+  changeAuthState: PropTypes.func.isRequired,
+  fetchAuthedUser: PropTypes.func.isRequired
+};
 
 TitleBar.defaultProps = {
   handleDrawerToggle: null,
-}
+};
 
-export default TitleBar
+export default TitleBar;
