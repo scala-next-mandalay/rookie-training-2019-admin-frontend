@@ -2,11 +2,12 @@ import React from 'react';
 //import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper ,Box, Container, Grid, CardMedia,Card, CardActions, CardContent,Button, Dialog, 
-DialogTitle,DialogContent, TextField, DialogActions,NativeSelect} from '@material-ui/core';
+DialogTitle,DialogContent, TextField, DialogActions} from '@material-ui/core';
 import { BASEURL_ITEM_IMAGES } from '../constants';
 import InfiniteScroll from 'react-infinite-scroller';
 import { AddPhotoAlternate as AddPhotoIcon } from '@material-ui/icons';
 import { validateForm } from '../util';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import './style.css';
 
 const uuidv1 = require('uuid/v1');
@@ -88,10 +89,19 @@ const useStyles = makeStyles(theme => ({
   },
   button:{
     border: '1px solid gray',
-    backgroundColor: '#b0bec5',
+    backgroundColor: '#c5cae9',
   },
   diaction:{
     marginRight:'17px',
+  },
+  progress: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+  },
+  option:{
+    width:'95%',
+    margin:0,
+    padding:0,
   }
 }));
 /*
@@ -99,10 +109,22 @@ const useStyles = makeStyles(theme => ({
           
 */
 
-const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchAllItems, noMoreFetch,uploadImage, user, changeAuthState, history}) => {
+const ItemList = ({ 
+  items, 
+  categories,
+  deleteItem,
+  saveItem ,
+  setCategoryId, 
+  fetchAllItems, 
+  noMoreFetch,
+  changeAuthState, 
+  history,
+  loading,
+  openDialog,
+  setOpenDialog
+}) => {
   const classes = useStyles();
   
-  const [dialogOpen, setDialogOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [isDelete, setIsDelete] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -110,27 +132,18 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
   const [selectedImg, setSelectedImg] = React.useState(null);
   const [file, setFile] = React.useState(null);
   const [fileName, setFileName] = React.useState(null);
-  
-  const timer = React.useRef();
-  
-  React.useEffect(() => {
-      return () => {
-        clearTimeout(timer.current);
-      };
-    }, []);
-    
+
   const initialItem = {id: null, name: "", price: "", category_id: ""};
   
   const handleChangeValue = fieldName => event => {
     const newItem = {...selectedItem};
     newItem[fieldName] =  event.target.value;
-    // console.log(newItem)
     setSelectedItem(newItem);
   };
-  console.log('Items',items);
+
   const handleEdit = item => event => {
     setSelectedItem(item);
-    setDialogOpen(true);
+    setOpenDialog(true)
     setIsDelete(false);
     setErrors({});
     setSelectedImg(null);
@@ -138,7 +151,7 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
 
   const handleCloseDialog = () => {
     setSelectedImg(null);
-    setDialogOpen(false);
+    setOpenDialog(false);
     setIsLogin(false);
     setFile(null);
     setFileName(null);
@@ -149,10 +162,10 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
     isNumeric: ['price']
   };
   
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     if (selectedItem) {
       const errs = validateForm(validationSetting, selectedItem);
-      console.log('###handleSubmit###', errs);
       if (errs) {
         setErrors(errs);
       }
@@ -164,22 +177,8 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
           }
           else 
           {
-            if(user === null)
-            {
-            setIsLogin(true);
-            }
-            
-            else
-            {
-            setIsLogin(false);
             saveItem(selectedItem, fileName, file);
-            }
           }
-
-          timer.current = setTimeout(() => {
-          handleCloseDialog();
-          //window.location.reload();
-        }, 3000);
       }
     }
   };
@@ -192,7 +191,7 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
   
   const handleDelete = item => event => {
     setSelectedItem(item);
-      setDialogOpen(true);
+      setOpenDialog(true);
       setIsDelete(true);
     setErrors({});
   };
@@ -234,7 +233,7 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
   
   const deleteDialog = (selectedItem && isDelete) ? (
     <Dialog 
-      open={dialogOpen} 
+      open={openDialog} 
       onClose={handleCloseDialog} 
       aria-labelledby="item-delete-dialog"
       fullWidth
@@ -259,7 +258,8 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
   ) : null;
   
   const saveDialog = (selectedItem && isDelete === false) ? (
-    <Dialog open={dialogOpen} onClose={handleCloseDialog} aria-labelledby="form-dialog-title">
+    <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="form-dialog-title">
+      <form onSubmit={handleSubmit}>
       <DialogTitle id="form-dialog-title">
         {selectedItem.id ? "Edit (ID:"+selectedItem.id+")" : "Create"}
         {isLogin ? <Box color="red" >You don't have Upload Permission. <Button onClick={handleLogin} color="secondary" >sign in</Button></Box> : null}
@@ -275,6 +275,7 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
           onChange={handleChangeValue("name")}
           error={errors.name ? true : false}
           fullWidth
+          required
         />
         <TextField
           className={classes.textfield}
@@ -286,18 +287,27 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
           onChange={handleChangeValue("price")}
           error={errors.price ? true : false}
           fullWidth
+          required
         />
         <TextField
-        id="outlined-select-currency"
+        id="category"
         select
         label="Category"
         className={classes.textField}
-        value={selectedItem.category_id}
+        value={selectedItem.category_id ? selectedItem.category_id : ""}
         onChange={handleChangeValue("category_id")}
         margin="normal"
         variant="outlined"
         helperText="Please select your category"
+        SelectProps={{
+          native: true,
+          MenuProps: {
+            className: classes.menu,
+          },
+        }}
+        required
       >
+        <option value=""></option>
         {categories.map((category) => {
             return (<option key={category.id} value={category.id} style={{padding:"5px 10px",}}>{category.name}</option>);
           })}
@@ -343,10 +353,11 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
         <Button onClick={handleCloseDialog} color="primary" className={classes.button}>
           Cancel
         </Button>
-        <Button onClick={handleSubmit} color="primary" className={classes.button}>
-          Submit
+        <Button type="submit" color="primary" className={classes.button}>
+          Submit {loading ? <CircularProgress size={20} color="secondary" className={classes.progress} />: null}
         </Button>
       </DialogActions>
+      </form>
     </Dialog>
   ):null;
   
@@ -392,22 +403,34 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
   const paperControl = (
     <Paper className={classes.paper}>
       <Grid container>
-        <Grid item xs={6} sm={1} className={classes.gridControlPanel}>
-          <Box ml={0} my="auto" fontWeight={600}  flexDirection="row" display="flex">
+        <Grid item xs={6} sm={9} className={classes.gridControlPanel}>
+          <Box ml={0} py={1} my="auto" fontWeight={600}  flexDirection="row" display="flex">
             Artworks ({items.length})
           </Box>
         </Grid>
-        <Grid item xs={6} sm={10} className={classes.gridControlPanel}>
-        <NativeSelect
-              className={classes.inputField}
+        <Grid item xs={6} sm={2} className={classes.gridControlPanel}>
+          <Box>
+            <TextField
+              className={classes.option}
               error={errors.category_id ? true : false}
               onChange={handleChangeCategory}
+              variant="outlined"
+              margin="dense"
+              select
+              SelectProps={{
+                native: true,
+                MenuProps: {
+                  className: classes.menu,
+                },
+              }}
               >
               <option value="">All categories</option>
               {categories.map((category) => {
                 return (<option key={category.id} value={category.id}>{category.name}</option>);
               })}
-            </NativeSelect></Grid>
+            </TextField>
+          </Box>
+        </Grid>
         <Grid item xs={12} sm={1} className={classes.gridControlPanel}>
           <Box mr={1}>
             <Button 
@@ -433,7 +456,7 @@ const ItemList = ({ items, categories,deleteItem,saveItem ,setCategoryId, fetchA
       initialLoad={true}
       loader={<div className="loader" key={0}></div>}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         {paperControl}
         <Grid container>
           {paperItems}

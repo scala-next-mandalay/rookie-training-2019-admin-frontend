@@ -1,14 +1,15 @@
 import axios from 'axios';
-import { URL_GET_ALL_ITEMS, URL_DELETE_ITEM, URL_PUT_ITEM,URL_POST_ITEM } from '../constants';
+import { URL_REST_ITEMS, URL_PUT_ITEM,URL_POST_ITEM } from '../constants';
 import format from 'string-format';
 import { Storage } from 'aws-amplify';
 
 const initialState = {
   alreadyFetched: false,
   rows: [],
-  error: "",
   selectedCateogryId: null,
   noMoreFetch: false,
+  close: false,
+  openDialog: false,
 };
 
 //=============================================================================
@@ -24,10 +25,16 @@ export const itemsReducer = (state = initialState, action) => {
     case 'ITEM_FETCH_ROWS_DONE':
       return {
         ...state,
-        rows: [...state.rows, ...action.payload]
+        rows: [...state.rows, ...action.payload],
+        loading: false
       };
     case 'ITEM_DELETE_DONE':
       return _item_delete_done(state, action);
+    case 'ITEM_POST_DONE':
+      return {
+        ..._getCommonState(state),
+        rows: [...state.rows, action.payload],
+      };
     case 'ITEM_PUT_DONE':
       return _item_put_done(state, action);
     case 'ITEM_SET_CATEGORY_ID':
@@ -39,6 +46,16 @@ export const itemsReducer = (state = initialState, action) => {
       return {
         ...state,
         noMoreFetch: true
+      };
+    case 'ITEM_BEGIN_LOADING':
+      return {
+        ...state,
+        loading: true
+      };
+    case 'ITEM_OPEN_DIALOG':
+      return {
+        ...state,
+        openDialog: action.payload
       };
     default:
       return state;
@@ -58,8 +75,8 @@ const _item_put_done = (state, action) => {
   }
   
   return {
-    ...state,
-    rows: newRows
+    ..._getCommonState(state),
+    rows: newRows,
   };
 };
 const _item_delete_done = (state, action) => {
@@ -71,11 +88,14 @@ const _item_delete_done = (state, action) => {
     }
   }
   
-  return {
-    ...state,
-    rows: newRows
-  };
+  return _getCommonState(state);
 };
+
+const _getCommonState = (state) => ({
+  ...state,
+  loading: false,
+  openDialog: false,
+});
 
 //=============================================================================
 //ActionCreators
@@ -83,11 +103,15 @@ const _item_delete_done = (state, action) => {
 
 export const saveItem = (item,fileName, fileData) => {
   return async (dispatch, getState) => {
+      dispatch({
+        type: 'ITEM_BEGIN_LOADING'
+      });
+      
       //update
       const updateData = {
         name: item.name, 
         price: item.price, 
-        category_id: item.category_id,
+        category_id: Number(item.category_id),
         image: item.image,
       };
       if(fileName !== null && fileData !== null){
@@ -96,7 +120,7 @@ export const saveItem = (item,fileName, fileData) => {
       });
     }
       
-      if (item.id === null) {
+    if (item.id === null) {
       //INSERT
       const axRes = await axios.post(URL_POST_ITEM, updateData);
       dispatch({
@@ -120,8 +144,7 @@ export const deleteItem = (item) => {
   return async (dispatch, getState) => {
     
       //delete
-      const url = format(URL_DELETE_ITEM, item.id);
-      await axios.delete(url);
+      await axios.delete(URL_REST_ITEMS+'/'+item.id);
       dispatch({
         type: 'ITEM_DELETE_DONE',
         payload: item.id
@@ -132,18 +155,21 @@ export const deleteItem = (item) => {
 export const fetchAllItems = () => {
   return async (dispatch, getState) => {
     
-    
-    if (getState().items.alreadyFetched) {
-      return
+    if (getState().items.loading) {
+      return;
     }
     
     dispatch({
-      type: 'ITEM_SET_ALREADY_FETCHED'
-    })
+      type: 'ITEM_BEGIN_LOADING'
+    });
     
-    console.log('fetchAllItems', getState().items.rows.length);
     
-    const url = format(URL_GET_ALL_ITEMS, getState().items.rows.length);
+    let url = URL_REST_ITEMS+'?offset='+getState().items.rows.length;
+    if (getState().items.selectedCateogryId) {
+      url += '&category_id='+getState().items.selectedCateogryId;
+    }
+    
+    console.log('fetchAllItems', url);
     const axRes = await axios.get(url);
     
     if (axRes.data.data.length === 0) {
@@ -162,4 +188,9 @@ export const fetchAllItems = () => {
 export const setCategoryId = categoryId => ({
   type: 'ITEM_SET_CATEGORY_ID',
   payload: categoryId
+});
+
+export const setOpenDialog = (val) => ({
+  type: 'ITEM_OPEN_DIALOG',
+  payload: val
 })

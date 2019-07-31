@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import ItemList from '../components/ItemList';
-import { deleteItem,saveItem,setCategoryId,fetchAllItems } from '../modules/items';
+import { deleteItem,saveItem,setCategoryId,fetchAllItems,setOpenDialog } from '../modules/items';
 import { uploadImage } from '../modules/image';
 
 const _getItemsByCategory = (rows, categoryId) => {
@@ -17,7 +17,9 @@ export default connect(
   (state) => ({
     items: _getItemsByCategory(state.items.rows, state.items.selectedCateogryId),
     categories: state.categories.rows,
-    noMoreFetch: state.items.noMoreFetch
+    noMoreFetch: state.items.noMoreFetch,
+    loading: state.items.loading,
+    openDialog: state.items.openDialog,
   }),
   (dispatch) => ({
     saveItem: (item,fileName,fileData) =>  dispatch(saveItem(item,fileName,fileData)),
@@ -25,5 +27,6 @@ export default connect(
     setCategoryId: (categoryId) =>  dispatch(setCategoryId(categoryId)),
     fetchAllItems: () => dispatch(fetchAllItems()),
     uploadImage: (fileName, fileData) => dispatch(uploadImage(fileName, fileData)),
+    setOpenDialog: (val) => dispatch(setOpenDialog(val)),
   })
 )(ItemList);

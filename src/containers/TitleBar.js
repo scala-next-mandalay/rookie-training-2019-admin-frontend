@@ -1,10 +1,6 @@
-
-import { connect } from 'react-redux'
-
-import TitleBar from '../components/TitleBar'
-
-import { signOut } from '../modules/auth'
-
+import { connect } from 'react-redux';
+import TitleBar from '../components/TitleBar';
+import { signOut } from '../modules/auth';
 
 export default connect(
   null,
@@ -12,4 +8,4 @@ export default connect(
     signOut: () => dispatch(signOut()),
   })
 
-)(TitleBar)
+)(TitleBar);

@@ -1,5 +1,4 @@
 import React from 'react';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { lighten,makeStyles } from '@material-ui/core/styles';
 import {Typography ,Paper,Grid,Table,TableBody,TableCell,TableHead,TablePagination,
@@ -17,30 +16,6 @@ const TabContainer = (props) =>{
   );
 };
 
-const desc = (a, b, orderBy) => {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-};
-
-const stableSort = (array, cmp) => {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = cmp(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-};
-
-const getSorting = (order, orderBy) => {
-  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-};
-
 const headRows = [
   { id: 'name', numeric: false, disablePadding: false, label: 'Product Name' },
   { id: 'unit_price', numeric: true, disablePadding: false, label: 'Item_Price' },
@@ -49,10 +24,15 @@ const headRows = [
 ];
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
+  root:{
+        paddingTop:theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        marginTop: theme.spacing(1),
+     [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(5),
+        marginRight: theme.spacing(5),
+    },
   },
   paper: {
     width: '100%',
@@ -135,6 +115,7 @@ spacer: {
   },
   title: {
     flex: '0 0 auto',
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -142,9 +123,7 @@ const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
 
   return (
-    <Toolbar
-      className={clsx(classes.root)}
-    >
+    <Toolbar>
         <div className={classes.title}>
               <Typography variant="h5" gutterBottom style={{paddingTop:"20px"}}>
                 OrderItems
@@ -162,7 +141,7 @@ const EnhancedTableToolbar = props => {
   );
 };
 
-const OrderItemList = ({orderitems}) => {
+const OrderItemList = ({orderitems, loading}) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('date');
@@ -204,15 +183,13 @@ const OrderItemList = ({orderitems}) => {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, orderitems.length - page * rowsPerPage);
 
   const ccyFormat = (num) =>{
-  return `${num.toFixed(2)}`;
+  //return `${num.toFixed(2)}`;
+  return num ? `${num.toFixed(2)}` : '@';
 };
-  const subtotal = (orderitems) => {
-    return orderitems.map(({ total }) => total).reduce((sum, i) => sum + i, 0);
-  };
-  const TAX_RATE = 0.07;
-  const invoiceSubtotal = subtotal(orderitems);
-  const invoiceTaxes = TAX_RATE * invoiceSubtotal;
-  const invoiceTotal = invoiceTaxes + invoiceSubtotal;
+  const TAX_RATE = 0.00;
+  const invoiceSubtotal = orderitems.length > 0 ? orderitems[0].total_price : null;
+  const invoiceTaxes = 30;
+  const invoiceTotal = invoiceSubtotal + invoiceTaxes;
   const PCGrid=(
               <div className={classes.tableWrapper}>
                 <Table
@@ -226,9 +203,9 @@ const OrderItemList = ({orderitems}) => {
                       rowCount={orderitems.length}
                     />
                     <TableBody>
-                      {stableSort(orderitems, getSorting(order, orderBy))
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((orderitem, index) => {
+                      {orderitems.map((orderitem, index) => {
+                        
+                        
                           const labelId = `enhanced-table-checkbox-${index}`;
         
                           return (
@@ -240,9 +217,9 @@ const OrderItemList = ({orderitems}) => {
                               <TableCell component="th" id={labelId} scope="row">
                                 {orderitem.name}
                               </TableCell>
-                              <TableCell align="right">{ccyFormat(orderitem.unit_price)} $</TableCell>
+                              <TableCell align="right">{ccyFormat(orderitem.unit_price)}</TableCell>
                               <TableCell align="right">Ordered : {orderitem.quantity}</TableCell>
-                              <TableCell align="right">{orderitem.total}</TableCell>
+                              <TableCell align="right">{ccyFormat(orderitem.unit_price * orderitem.quantity)}</TableCell>
                             </TableRow>
                           );
                         })}
@@ -263,15 +240,15 @@ const OrderItemList = ({orderitems}) => {
                         </TableRow>
                       {emptyRows > 0 && (
                         <TableRow style={{ height: 30 * emptyRows }}>
-                          <TableCell colSpan={6} />
+                          <TableCell colSpan={9} />
                         </TableRow>
                       )}
                     </TableBody>
                   </Table>
                 </div>
   );
+  
   const newPaper = (
-    orderitems.length>0? (
       <Grid container>
         <Grid item xs={12} sm={12}>
         <Typography variant="h6" gutterBottom className={classes.title}>
@@ -282,13 +259,13 @@ const OrderItemList = ({orderitems}) => {
         <Grid item xs={12} sm={3} className={classes.info}>
           <Box ml={0} my="auto" fontWeight={600}>
             <Grid item sm={12}>Shipping Address </Grid>
-            <Grid item sm={12} className={classes.add}>{orderitems[0].address1}</Grid>
+            <Grid item sm={12} className={classes.add}>{orderitems.length >0 ? orderitems[0].address1:null}</Grid>
           </Box>
         </Grid>
         <Grid item xs={12} sm={3} className={classes.info}>
           <Box ml={0} my="auto" fontWeight={600}>
             <Grid item sm={12}>Billing Address </Grid>
-            <Grid item sm={12} className={classes.add}>{orderitems[0].address2}</Grid>
+            <Grid item sm={12} className={classes.add}>{orderitems.length >0 ? orderitems[0].address2:null}</Grid>
           </Box>
         </Grid>
         <Grid item xs={12} sm={3} className={classes.info}>
@@ -298,7 +275,6 @@ const OrderItemList = ({orderitems}) => {
           </Box>
         </Grid>
       </Grid>
-      ):null
   );
   const paperControl = (
     <Paper className={classes.paper}>
@@ -334,7 +310,7 @@ const OrderItemList = ({orderitems}) => {
 
   return (
     <div className={classes.root}>
-        {paperControl}
+        {loading ? <h2>..... Loading</h2> : paperControl}
     </div>
   );
 };

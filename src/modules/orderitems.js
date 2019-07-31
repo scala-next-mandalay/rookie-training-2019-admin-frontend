@@ -3,8 +3,8 @@ import { URL_GET_ORDERITEMS } from '../constants';
 import format from 'string-format';
 
 const initialState = {
-  alreadyFetched: false,
   rows: [],
+  loading: false
 };
 
 //=============================================================================
@@ -12,15 +12,18 @@ const initialState = {
 //=============================================================================
 export const orderitemsReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'SET_ALREADY_FETCHED':
+    case 'ORDERITEMS_FETCH_BEGIN':
       return {
         ...state,
-        alreadyFetched: true
+        rows: [],
+        loading: true
       };
     case 'FETCH_ORDERITEMS_DONE':
+      console.log('FETCH_ORDERITEMS_DONE', action.payload[1]);
       return {
         ...state,
-        rows: action.payload
+        rows: action.payload,
+        loading: false
       };
     default:
       return state;
@@ -30,16 +33,24 @@ export const orderitemsReducer = (state = initialState, action) => {
 //=============================================================================
 //ActionCreators
 //=============================================================================
-export const fetchAllOrderItems = (id) => {
+export const fetchAllOrderItems = (orderId) => {
   return async (dispatch, getState) => {
-  
-    //search
-      const url = format(URL_GET_ORDERITEMS, id);
-      const axRes = await axios.get(url);
-
     dispatch({
-      type: 'FETCH_ORDERITEMS_DONE',
-      payload: axRes.data.data
+      type: 'ORDERITEMS_FETCH_BEGIN'
     });
+    
+    //for (const orderRow of  getState().orders.rows) {
+     // if (orderRow.id === orderId) {
+        //search
+        const url = format(URL_GET_ORDERITEMS, orderId);
+        const axRes = await axios.get(url);
+    
+        dispatch({
+          type: 'FETCH_ORDERITEMS_DONE',
+          payload:  axRes.data.data
+        });
+        //break;
+      //}
+    //}
   };
 };

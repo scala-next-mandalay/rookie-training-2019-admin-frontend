@@ -4,10 +4,8 @@ import format from 'string-format';
 
 const initialState = {
   alreadyFetched: false,
-  selectedOrderId: null,
   searchText: '',
   rows: [],
-  clickedOrderId : '',
 };
 
 //=============================================================================
@@ -25,21 +23,12 @@ export const ordersReducer = (state = initialState, action) => {
         ...state,
         rows: action.payload
       };
-    case 'ORDER_SET_BY_ID':
-      console.log('clicked id : ',action.payload);
-      return {
-        ...state,
-        selectedOrderId: action.payload
-      };
     case 'ORDER_SET_SEARCH_TEXT':
+      console.log("search",action.payload)
       return {
         ...state,
-        searchText: action.payload
-      };
-    case 'ORDER_ITEM_CLICK':
-      return {
-        ...state,
-       clickedOrderId : action.payload
+        searchText: action.payload[0],
+        rows: action.payload[1]
       };
     default:
       return state;
@@ -78,21 +67,11 @@ export const setSearchText = text => {
   {
       //search
       const url = format(URL_SEARCH_ORDER, text);
+      console.log("search url:",url)
       const axRes = await axios.get(url);
-      dispatch
-      ({
+      dispatch({
         type: 'ORDER_SET_SEARCH_TEXT',
-        payload: axRes.data.data
+        payload: [text,axRes.data.data]
       });
   };
 };
-
-export const setOrderId = orderId => ({
-  type: 'ORDER_SET_BY_ID',
-  payload: orderId
-});
-
-export const clickOrderId = order_id => ({
-  type: 'ORDER_ITEM_CLICK',
-  payload: order_id
-});

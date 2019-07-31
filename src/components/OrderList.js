@@ -2,12 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten,makeStyles } from '@material-ui/core/styles';
-import {Tabs,Tab,Typography,Box,TableHead,TableRow,TableCell,TableSortLabel,Grid,Toolbar,TextField,Paper,Table,TableBody,TablePagination} from '@material-ui/core';
+import {Tabs,Tab,Typography,Box,TableHead,TableRow,TableCell,TableSortLabel,Grid,Toolbar,TextField,Paper,Table,TableBody,TablePagination,Button} from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import OrderItemList from '../components/OrderItemList';
+import SearchIcon from '@material-ui/icons/Search';
 
-
-function TabPanel(props) {
+const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
   return (
@@ -22,7 +21,7 @@ function TabPanel(props) {
       <Box p={1}>{children}</Box>
     </Typography>
   );
-}
+};
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -30,14 +29,14 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
+const a11yProps = (index) =>{
   return {
     id: `nav-tab-${index}`,
     'aria-controls': `nav-tabpanel-${index}`,
   };
-}
+};
 
-function LinkTab(props) {
+const LinkTab = (props) => {
   return (
     <Tab
       component="a"
@@ -47,21 +46,19 @@ function LinkTab(props) {
       {...props}
     />
   );
-}
+};
 
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-  },
-  paper: {
-    width: '97.5%',
-    marginBottom: theme.spacing(2),
-    paddingTop: theme.spacing(2),
-    marginLeft: theme.spacing(2),
-    marginTop: theme.spacing(2),
+  root:{
+        paddingTop:theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        marginTop: theme.spacing(2),
+     [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(5),
+        marginRight: theme.spacing(5),
+    },
   },
   table: {
     minWidth: 750,
@@ -81,10 +78,10 @@ const useStyles = makeStyles(theme => ({
   add:{
     fontWeight:10,
     paddingTop:'10px'
-  }
+  },
 }));
 
-function desc(a, b, orderBy) {
+const desc = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -92,9 +89,9 @@ function desc(a, b, orderBy) {
     return 1;
   }
   return 0;
-}
+};
 
-function stableSort(array, cmp) {
+const stableSort = (array, cmp) => {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = cmp(a[0], b[0]);
@@ -102,11 +99,11 @@ function stableSort(array, cmp) {
     return a[1] - b[1];
   });
   return stabilizedThis.map(el => el[0]);
-}
+};
 
-function getSorting(order, orderBy) {
+const getSorting = (order, orderBy) => {
   return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
+};
 
 const headRows = [
   { id: 'created_at', numeric: false, disablePadding: false, label: 'Date' },
@@ -119,7 +116,7 @@ const headRows = [
   { id: 'total_price', numeric: true, disablePadding: false, label: 'Total ($)' },
 ];
 
-function EnhancedTableHead(props) {
+const EnhancedTableHead = (props) => {
   const { order, orderBy, onRequestSort } = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
@@ -147,11 +144,10 @@ function EnhancedTableHead(props) {
       </TableRow>
     </TableHead>
   );
-}
+};
 
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
@@ -174,14 +170,15 @@ const useToolbarStyles = makeStyles(theme => ({
   },
 }));
 
-const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItems,fetchAllOrders, orderItems}) => {
+const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllOrders, orderItems}) => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  
+  const [text, setText] = React.useState("");
+
   const isFirstRef = React.useRef(true);
   React.useEffect(() => {
     if (isFirstRef.current) {
@@ -189,14 +186,22 @@ const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItem
     }
   });
 
-  function handleRequestSort(event, property) {
+  const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
     setOrder(isDesc ? 'asc' : 'desc');
     setOrderBy(property);
-  }
+  };
   const handleChangeSearch = (event) => {
-    console.log('searchText:',event.target.value);
-    // setSearchText(event.target.value);
+    if(event.target.value == "")
+    {
+      setSearchText("");
+    }
+    let chgText="";
+    chgText=event.target.value;
+    setText(chgText);
+  };
+  const AddText = () =>{
+    setSearchText(text);
   };
   
   const EnhancedTableToolbar = props => {
@@ -207,37 +212,43 @@ const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItem
         className={clsx(classes.root)}
       >
         <div className={classes.title}>
-          <TextField
-          autoFocus
-          id="search"
-          label="Search"
-          className={classes.textField}
-          value={searchText}
-          onChange={handleChangeSearch}
-          margin="dense"
-          variant="outlined"
-          />
+          <div className="input-group">
+	      		<TextField
+              autoFocus
+              id="standard-search"
+              type="search"
+              placeholder="Search"
+              margin="dense"
+              className={classes.textField}
+              value={text}
+              onChange={handleChangeSearch}
+             />
+	      		<Button onClick={AddText} variant="contained" size="medium" color="primary" width="50">
+              <SearchIcon />
+            </Button>
+	      	</div>
         </div>
       </Toolbar>
     );
   };
 
-  function handleChangePage(event, newPage) {
+  const handleChangePage = (event, newPage) =>{
     setPage(newPage);
-  }
+  };
 
-  function handleChangeRowsPerPage(event) {
+  const handleChangeRowsPerPage = (event) =>{
     setRowsPerPage(+event.target.value);
     setPage(0);
-  }
+  };
   
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, orders.length - page * rowsPerPage);
 
-  function handleChange(event, newValue) {
+  const handleChange = (event, newValue) => {
     setValue(newValue);
-  }
+  };
   const link = id=> () => {
     fetchAllOrderItems(id);
+    
   };
   const Show = (
     <div>
@@ -263,12 +274,12 @@ const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItem
                     <TableRow
                       hover
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.id}
                     >
                       <TableCell component="th" id={labelId} scope="row">
                         {row.created_at}
                       </TableCell>
-                      <TableCell align="right"><Link to="/orderitems" replace component={Link}  onClick={link(row.id)}>{row.first_name} {row.last_name}</Link></TableCell>
+                      <TableCell align="right"><Link to="/orderitems" replace onClick={link(row.id)}>{row.first_name} {row.last_name}</Link></TableCell>
                       <TableCell align="right">{row.address1}</TableCell>
                       <TableCell align="right">{row.address2}</TableCell>
                       <TableCell align="right">{row.country}</TableCell>
@@ -280,7 +291,7 @@ const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItem
                 })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={9} />
                 </TableRow>
               )}
             </TableBody>
@@ -304,8 +315,8 @@ const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItem
         </div>
   );
   
-  const OrderList = (
-    <Paper className={classes.paper}>
+  return (
+    <Paper className={classes.root}>
       <Grid container>
         <Grid item xs={12} sm={12} className={classes.gridControlPanel}>
           <EnhancedTableToolbar />
@@ -334,9 +345,7 @@ const OrderList = ({orders,setOrderId,setSearchText,searchText,fetchAllOrderItem
       </Grid>
       </Paper>
   );
-  
 
-  return (orderItems === null) ? {OrderList} : <orderItems />
 };
 
 export default OrderList;

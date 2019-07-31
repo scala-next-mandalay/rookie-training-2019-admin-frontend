@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import OrderItemList from '../components/OrderItemList';
-import { fetchAllOrders } from '../modules/orders';
 // const _getOrderItemsByOrder = (rows, OrderId) => {
 //   console.log("click Id:" ,OrderId);
 //   if (OrderId <= 0) {
@@ -17,10 +16,6 @@ export default connect(
  
   (state) => ({
     orderitems: state.orderitems.rows,
-    items: state.items.rows,
-    orders: state.orders.rows,
-  }),
-   (dispatch) => ({
-    fetchAllOrders: () => dispatch(fetchAllOrders()),
+    loading: state.orderitems.loading,
   })
 )(OrderItemList);

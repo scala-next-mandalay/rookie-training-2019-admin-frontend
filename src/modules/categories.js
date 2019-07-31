@@ -111,7 +111,6 @@ export const deleteCategory = (category) => {
 
 export const fetchAllCategories = () => {
   return async (dispatch, getState) => {
-    console.log('fetchAllCategories')
     /*if (getState().categories.alreadyFetched) {
         //return;
     }

@@ -27,7 +27,7 @@ const ConfirmSignUp = React.memo(({ authState, changeAuthState, loading, error, 
             {error}
           </Box>
 
-          <Box width="100%" my={2}>
+          <Box width="100" my={2}>
             <TextField
               id="confirmationCode"
               label="Confirmation Code"

@@ -16,7 +16,7 @@ const initialState = {
 
 export const authReducer = (state = initialState, action) => {
   
-  console.log('authReducer='+action.type, action.payload)
+  console.log('authReducer='+action.type, action.payload);
   switch (action.type) {
     case 'AUTH_SYSTEM_ERROR':
       return {

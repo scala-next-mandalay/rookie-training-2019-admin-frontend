@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   button:{
     border: '1px solid gray',
-    backgroundColor: '#b0bec5',
+    backgroundColor: '#c5cae9',
   },
   diaction:{
     marginRight:'17px',
@@ -39,9 +39,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
   const handleChangeValue = fieldName => event => {
     const newCategory = {...selectedCategory};
     newCategory[fieldName] =  event.target.value;
-    //console.log(newCategory)
     setSelectedCategory(newCategory);
-    //console.log(setSelectedCategory)
   };
   
   const handleEdit = category => event => {
@@ -199,7 +197,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
   
   return (
     <React.Fragment>
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         {paperControl}
         <Grid container>
           {paperItems}
