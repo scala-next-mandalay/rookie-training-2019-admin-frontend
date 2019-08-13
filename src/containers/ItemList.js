@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import ItemList from '../components/ItemList';
 import { deleteItem,saveItem,setCategoryId,fetchAllItems,setOpenDialog } from '../modules/items';
 import { uploadImage } from '../modules/image';
+import { changeAuthState } from '../modules/auth';
 
 const _getItemsByCategory = (rows, categoryId) => {
   if (categoryId <= 0) {
@@ -28,5 +29,6 @@ export default connect(
     fetchAllItems: () => dispatch(fetchAllItems()),
     uploadImage: (fileName, fileData) => dispatch(uploadImage(fileName, fileData)),
     setOpenDialog: (val) => dispatch(setOpenDialog(val)),
+    changeAuthState: (value) => dispatch(changeAuthState(value)),
   })
 )(ItemList);

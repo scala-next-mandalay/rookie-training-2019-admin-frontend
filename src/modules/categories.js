@@ -75,9 +75,18 @@ const _category_delete_done = (state, action) => {
 
 export const saveCategory = (category) => {
   return async (dispatch, getState) => {
+    if (!getState().auth.user) {
+        return;
+      }
+  
+      const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+
+      const auth = {
+          headers: {Authorization:'Bearer ' + token } 
+      };
     if (!category.id) {
       //insert
-      const axRes = await axios.post(URL_POST_CATEGORY, {name: category.name});
+      const axRes = await axios.post(URL_POST_CATEGORY, {name: category.name},auth);
       dispatch({
         type: 'CATEGORY_POST_DONE',
         payload: axRes.data.data
@@ -86,7 +95,7 @@ export const saveCategory = (category) => {
     else {
       //update
       const url = format(URL_PUT_CATEGORY, category.id);
-      const axRes = await axios.put(url, {name: category.name});
+      const axRes = await axios.put(url, {name: category.name},auth);
       dispatch({
         type: 'CATEGORY_PUT_DONE',
         payload: axRes.data.data
@@ -97,10 +106,18 @@ export const saveCategory = (category) => {
 
 export const deleteCategory = (category) => {
   return async (dispatch, getState) => {
-    
+      if (!getState().auth.user) {
+        return;
+      }
+  
+      const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+
+      const auth = {
+          headers: {Authorization:'Bearer ' + token } 
+      };
       //delete
       const url = format(URL_DELETE_CATEGORY, category.id);
-      await axios.delete(url);
+      await axios.delete(url,auth);
       dispatch({
         type: 'CATEGORY_DELETE_DONE',
         payload: category.id
@@ -111,6 +128,7 @@ export const deleteCategory = (category) => {
 
 export const fetchAllCategories = () => {
   return async (dispatch, getState) => {
+    //console.log('fetchAllCategories:START')
     /*if (getState().categories.alreadyFetched) {
         //return;
     }
@@ -118,12 +136,21 @@ export const fetchAllCategories = () => {
     dispatch({
         type: 'CATEGORY_SET_ALREADY_FETCHED'
     });*/
+    
+    if (!getState().auth.user) {
+        return;
+      }
+  
+    const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
 
+    const auth = {
+        headers: {Authorization:'Bearer ' + token } 
+    };
     // const axRes = await axios.get(URL_GET_ALL_CATEGORIES)
     const url = format(URL_GET_ALL_CATEGORIES, getState().categories.rows.length);
-    const axRes = await axios.get(url);
+    const axRes = await axios.get(url,auth);
     
-    
+    //console.log('fetchAllCategories:END')
 
     dispatch({
       type: 'CATEGORY_FETCH_ROWS_DONE',

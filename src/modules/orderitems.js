@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { URL_GET_ORDERITEMS } from '../constants';
-import format from 'string-format';
+import { URL_REST_ORDERITEMS } from '../constants';
 
 const initialState = {
   rows: [],
@@ -19,7 +18,6 @@ export const orderitemsReducer = (state = initialState, action) => {
         loading: true
       };
     case 'FETCH_ORDERITEMS_DONE':
-      console.log('FETCH_ORDERITEMS_DONE', action.payload[1]);
       return {
         ...state,
         rows: action.payload,
@@ -38,12 +36,20 @@ export const fetchAllOrderItems = (orderId) => {
     dispatch({
       type: 'ORDERITEMS_FETCH_BEGIN'
     });
-    
+    if (!getState().auth.user) {
+        return;
+      }
+  
+    const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+
+    const auth = {
+        headers: {Authorization:'Bearer ' + token } 
+    };
     //for (const orderRow of  getState().orders.rows) {
      // if (orderRow.id === orderId) {
         //search
-        const url = format(URL_GET_ORDERITEMS, orderId);
-        const axRes = await axios.get(url);
+        let url = URL_REST_ORDERITEMS+'?order_id='+orderId;
+        const axRes = await axios.get(url,auth);
     
         dispatch({
           type: 'FETCH_ORDERITEMS_DONE',

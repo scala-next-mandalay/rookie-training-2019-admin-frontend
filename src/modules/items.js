@@ -8,7 +8,6 @@ const initialState = {
   rows: [],
   selectedCateogryId: null,
   noMoreFetch: false,
-  close: false,
   openDialog: false,
 };
 
@@ -106,7 +105,9 @@ export const saveItem = (item,fileName, fileData) => {
       dispatch({
         type: 'ITEM_BEGIN_LOADING'
       });
-      
+      if (!getState().auth.user) {
+        return;
+      }
       //update
       const updateData = {
         name: item.name, 
@@ -115,14 +116,18 @@ export const saveItem = (item,fileName, fileData) => {
         image: item.image,
       };
       if(fileName !== null && fileData !== null){
-      const img = await Storage.put(fileName, fileData, {
+      await Storage.put(fileName, fileData, {
           contentType: fileData.type
       });
     }
       
+    const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+    const auth = {
+        headers: {Authorization:'Bearer ' + token } 
+    };
     if (item.id === null) {
       //INSERT
-      const axRes = await axios.post(URL_POST_ITEM, updateData);
+      const axRes = await axios.post(URL_POST_ITEM, updateData,auth);
       dispatch({
         type: 'ITEM_POST_DONE',
         payload: axRes.data.data
@@ -131,7 +136,7 @@ export const saveItem = (item,fileName, fileData) => {
     else {
       //UPDATE
       const url = format(URL_PUT_ITEM, item.id);
-      const axRes = await axios.put(url, updateData);
+      const axRes = await axios.put(url, updateData,auth);
       dispatch({
         type: 'ITEM_PUT_DONE',
         payload: axRes.data.data
@@ -142,9 +147,20 @@ export const saveItem = (item,fileName, fileData) => {
 
 export const deleteItem = (item) => {
   return async (dispatch, getState) => {
-    
+      
+      if (!getState().auth.user) {
+        return;
+      }
+  
+      const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+
+      const auth = {
+          headers: {Authorization:'Bearer ' + token } 
+      };
+      
       //delete
-      await axios.delete(URL_REST_ITEMS+'/'+item.id);
+      const url = URL_REST_ITEMS + '/' + item.id;
+      await axios.delete(url, auth);
       dispatch({
         type: 'ITEM_DELETE_DONE',
         payload: item.id
@@ -154,7 +170,9 @@ export const deleteItem = (item) => {
 
 export const fetchAllItems = () => {
   return async (dispatch, getState) => {
-    
+    if (!getState().auth.user) {
+      return;
+    }
     if (getState().items.loading) {
       return;
     }
@@ -163,15 +181,17 @@ export const fetchAllItems = () => {
       type: 'ITEM_BEGIN_LOADING'
     });
     
+    const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+    const auth = {
+        headers: {Authorization:'Bearer ' + token } 
+    };
+    
     
     let url = URL_REST_ITEMS+'?offset='+getState().items.rows.length;
-    if (getState().items.selectedCateogryId) {
-      url += '&category_id='+getState().items.selectedCateogryId;
-    }
-    
-    console.log('fetchAllItems', url);
-    const axRes = await axios.get(url);
-    
+    //if (getState().items.selectedCateogryId) {
+    //  url += '&category_id='+getState().items.selectedCateogryId;
+    //}
+    const axRes = await axios.get(url,auth);
     if (axRes.data.data.length === 0) {
       dispatch({
         type: 'ITEM_NO_MORE_FETCH'

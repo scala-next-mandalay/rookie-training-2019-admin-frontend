@@ -1,3 +1,4 @@
+
 export const validateForm  = (validationSettings, values) => {
   let errors = {}
   for (const [method, fields] of Object.entries(validationSettings)) {
@@ -19,4 +20,3 @@ const validateByMethod = (method, fields, values) => {
     }
   }
 }
-

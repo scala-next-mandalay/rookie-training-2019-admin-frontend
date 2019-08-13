@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { URL_GET_ALL_ORDERS,URL_SEARCH_ORDER } from '../constants';
-import format from 'string-format';
+import { URL_REST_ORDERS } from '../constants';
 
 const initialState = {
   alreadyFetched: false,
@@ -24,11 +23,19 @@ export const ordersReducer = (state = initialState, action) => {
         rows: action.payload
       };
     case 'ORDER_SET_SEARCH_TEXT':
-      console.log("search",action.payload)
       return {
         ...state,
-        searchText: action.payload[0],
-        rows: action.payload[1]
+        rows: action.payload
+      };
+    case 'ORDER_ITEM_CLICK':
+      return {
+        ...state,
+       clickedOrderId : action.payload
+      };
+    case 'SORTING_ORDER_COLUMNS':
+      return {
+        ...state,
+        rows : action.payload
       };
     default:
       return state;
@@ -39,21 +46,19 @@ export const ordersReducer = (state = initialState, action) => {
 //ActionCreators
 //=============================================================================
 
-export const fetchAllOrders = () => {
+export const fetchAllOrders = (num) => {
   return async (dispatch, getState) => {
-    
-    if (getState().orders.alreadyFetched) {
-        return ;
+    if (!getState().auth.user) {
+      return;
     }
 
-    dispatch({
-        type: 'SET_ALREADY_FETCHED'
-    });
-
-    
-    
-    const url = format(URL_GET_ALL_ORDERS, getState().orders.rows.length);
-    const axRes = await axios.get(url);
+    const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+    console.log('Token:',token);
+    const auth = {
+      headers: { Authorization: 'Bearer ' + token }
+    };
+    let url = URL_REST_ORDERS+'?start='+num+'&sortcol=created_at&sortorder=desc';
+    const axRes = await axios.get(url,auth);
 
     dispatch({
       type: 'FETCH_ORDERS_DONE',
@@ -64,14 +69,41 @@ export const fetchAllOrders = () => {
 
 export const setSearchText = text => {
   return async (dispatch, getState) => 
-  {
+  {   
+    if (!getState().auth.user) {
+      return;
+    }
+
+    const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+    const auth = {
+      headers: { Authorization: 'Bearer ' + token }
+    };
       //search
-      const url = format(URL_SEARCH_ORDER, text);
-      console.log("search url:",url)
-      const axRes = await axios.get(url);
+      let url = URL_REST_ORDERS+'?search='+text;
+      const axRes = await axios.get(url,auth);
       dispatch({
         type: 'ORDER_SET_SEARCH_TEXT',
-        payload: [text,axRes.data.data]
+        payload: axRes.data.data
+      });
+  };
+};
+
+export const sorting = ( sortcol,sortorder ) => {
+  return async (dispatch, getState) => 
+  {   
+    if (!getState().auth.user) {
+      return;
+    }
+    const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
+    const auth = {
+      headers: { Authorization: 'Bearer ' + token }
+    };
+      //sort
+      let url = URL_REST_ORDERS+'?sortcol='+sortcol+'&sortorder='+sortorder;
+      const axRes = await axios.get(url,auth);
+      dispatch({
+        type: 'SORTING_ORDER_COLUMNS',
+        payload: axRes.data.data
       });
   };
 };

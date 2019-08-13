@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, List, ListItem, ListItemText, ListItemIcon, Divider} from '@material-ui/core';
+import { FormattedMessage } from 'react-intl';
 import {
     Photo as PhotoIcon, 
     Brush as BrushIcon, 
@@ -12,7 +13,7 @@ import { Link } from 'react-router-dom';
 const useStyles = makeStyles(theme => ({
   link: {
     textDecoration: "none",
-    color: theme.palette.primary.main
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -26,7 +27,7 @@ const MenuList = () => {
             <ListItemIcon ><BrushIcon /></ListItemIcon>
             <ListItemText>
               <Box>
-                Artists
+                <FormattedMessage id="Side.Artist"/>
               </Box>
             </ListItemText>
           </ListItem>
@@ -36,7 +37,7 @@ const MenuList = () => {
            <ListItemIcon><PhotoIcon /></ListItemIcon>
             <ListItemText>
               <Box>
-                Artworks
+                <FormattedMessage id="Side.Artwork"/>
               </Box>
             </ListItemText>
           </ListItem>
@@ -49,7 +50,7 @@ const MenuList = () => {
            <ListItemIcon><ShoppingCartIcon /></ListItemIcon>
             <ListItemText>
               <Box>
-                Orders
+                <FormattedMessage id="Side.Order"/>
               </Box>
             </ListItemText>
           </ListItem>

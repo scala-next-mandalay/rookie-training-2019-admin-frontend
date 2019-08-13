@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box, Container, Paper, Dialog, 
 DialogTitle,DialogContent, TextField, DialogActions ,Grid, Button } from '@material-ui/core';
 import { validateForm } from '../util';
+import { FormattedMessage } from 'react-intl';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -94,23 +95,23 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
       maxWidth="xs"
     >
       <DialogTitle id="category-delete-dialog">
-        {"Are you sure?"}
+        <FormattedMessage id="DeleteConfirm.Text"/>
       </DialogTitle>
       <DialogContent>
-        <Box>Do you really want to delete {selectedCategory.id}: {selectedCategory.name}.</Box>
+        <Box><FormattedMessage id="DeleteConfirm.Content"/> {selectedCategory.id}: {selectedCategory.name}.</Box>
         <Box fontWeight={600}></Box>
       </DialogContent>
       <DialogActions className={classes.diaction}>
         <Button onClick={handleCloseDialog} color="primary" className={classes.button}>
-          Cancel
+          <FormattedMessage id="Button.Cancel"/>
         </Button>
         <Button onClick={handleSubmit} color="primary" className={classes.button}>
-          Delete
+          <FormattedMessage id="Button.Delete"/>
         </Button>
       </DialogActions>
     </Dialog>
   ) : null;
-
+  
   const saveDialog = (selectedCategory && isDelete === false) ? (
     <Dialog 
       open={dialogOpen} 
@@ -120,7 +121,12 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
       maxWidth="xs"
     >
       <DialogTitle id="category-save-dialog" >
-        {selectedCategory.id ? "Edit (ID:"+selectedCategory.id+")" : "Create"}
+        {selectedCategory.id ?
+          <Box><FormattedMessage id="Button.Edit"/> (ID: {selectedCategory.id})</Box>
+          :
+          <FormattedMessage id="Button.Create"/>
+        }
+        
       </DialogTitle>
       <DialogContent>
         <TextField
@@ -128,7 +134,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
           autoFocus
           error={errors.name ? true : false}
           id="name"
-          label="Name"
+          label={<FormattedMessage id="Button.Edit"/>}
           value={selectedCategory.name}
           onChange={handleChangeValue("name")}
           fullWidth
@@ -136,10 +142,10 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
       </DialogContent>
       <DialogActions className={classes.diaction}>
         <Button onClick={handleCloseDialog} color="primary" className={classes.button}>
-          Cancel
+          <FormattedMessage id="Button.Cancel"/>
         </Button>
         <Button onClick={handleSubmit} color="primary" className={classes.button}>
-          Submit
+          <FormattedMessage id="Button.Submit"/>
         </Button>
       </DialogActions>
     </Dialog>
@@ -157,10 +163,10 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
             </Box>
             <Box mt={1} mr={0} ml="auto">
               <Button color="primary" onClick={handleEdit(category)}>
-                Edit
+                <FormattedMessage id="Button.Edit"/>
               </Button>
               <Button color="primary" onClick={handleDelete(category)}>
-                Delete
+                <FormattedMessage id="Button.Delete"/>
               </Button>
             </Box>
           </Box>
@@ -174,7 +180,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
       <Grid container>
         <Grid item xs={6} sm={11} className={classes.gridControlPanel}>
           <Box ml={0} my="auto" fontWeight={600}>
-            Artists ({categories.length})
+            <FormattedMessage id="Side.Artist"/> ({categories.length})
           </Box>
         </Grid>
         <Grid item xs={6} sm={1} className={classes.gridControlPanel}>
@@ -186,7 +192,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
               color="secondary" 
               onClick={handleEdit(initialCategory)}
             >
-              Create
+              <FormattedMessage id="Button.Create"/>
             </Button>
           </Box>
         </Grid>

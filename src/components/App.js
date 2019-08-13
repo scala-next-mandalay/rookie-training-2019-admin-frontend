@@ -14,16 +14,25 @@ import OrderItemList from '../containers/OrderItemList';
 import Amplify from 'aws-amplify';
 import aws_exports from '../aws-exports';
 import Login from '../containers/Login';
+import Test from './Test';
+import { chooseLocale } from '../locations';
+import { IntlProvider } from 'react-intl';
+
 Amplify.configure(aws_exports);
 
-const App = ({fetchAllCategories,　fetchAuthedUser, user}) => {
+const App = ({fetchAllCategories,fetchAuthedUser, user,refreshToken,locale}) => {
   const isFirstRef = React.useRef(true);
   React.useEffect(() => {
     if (isFirstRef.current) {
       isFirstRef.current = false;
       fetchAuthedUser();
-      fetchAllCategories();
-    }
+    }fetchAllCategories();
+    const timer = window.setInterval(() => {
+      refreshToken();
+    }, 600000); //after 10 minutes to call refreshToken()
+    return () => { // Return callback to run on unmount.
+      window.clearInterval(timer);
+    };
   });
 
   const auth = (
@@ -33,6 +42,10 @@ const App = ({fetchAllCategories,　fetchAuthedUser, user}) => {
           <Header />
           <Box flexGrow={1} display="flex" flexDirection="column">
             <ToolbarSpacer />
+            <Route exact path="/test" render={() => {
+              return <Test />;
+            }} />
+            
             <Route exact path="/" render={() => {
               return <CategoryList />;
             }} />
@@ -51,6 +64,10 @@ const App = ({fetchAllCategories,　fetchAuthedUser, user}) => {
             <Route exact path="/login" render={() => {
               return <Login />;
             }} />
+            <Route exact path="/myjwt" render={() => {
+              const token = user ? user.signInUserSession.accessToken.jwtToken : null;
+              return (<div>{token}</div>);
+        }} />
           </Box>
         </Box>
       </Router>
@@ -58,12 +75,14 @@ const App = ({fetchAllCategories,　fetchAuthedUser, user}) => {
   
   const contents = user ? auth : <Login />;
   return (
+  <IntlProvider locale={locale} messages={chooseLocale(locale)}>
     <MuiThemeProvider theme={theme}>
       <Router>
         <CssBaseline />
         {contents}
       </Router>
     </MuiThemeProvider>
+  </IntlProvider>
   );
 };
 

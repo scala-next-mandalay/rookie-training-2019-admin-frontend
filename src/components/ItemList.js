@@ -1,5 +1,5 @@
 import React from 'react';
-//import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper ,Box, Container, Grid, CardMedia,Card, CardActions, CardContent,Button, Dialog, 
 DialogTitle,DialogContent, TextField, DialogActions} from '@material-ui/core';
@@ -8,6 +8,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { AddPhotoAlternate as AddPhotoIcon } from '@material-ui/icons';
 import { validateForm } from '../util';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { FormattedMessage } from 'react-intl';
 import './style.css';
 
 const uuidv1 = require('uuid/v1');
@@ -32,6 +33,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight:theme.spacing(1),
     marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
     padding: theme.spacing(2),
   },
   itemBox: {
@@ -109,7 +111,7 @@ const useStyles = makeStyles(theme => ({
           
 */
 
-const ItemList = ({ 
+const ItemList = ({ intl,
   items, 
   categories,
   deleteItem,
@@ -143,7 +145,7 @@ const ItemList = ({
 
   const handleEdit = item => event => {
     setSelectedItem(item);
-    setOpenDialog(true)
+    setOpenDialog(true);
     setIsDelete(false);
     setErrors({});
     setSelectedImg(null);
@@ -240,18 +242,18 @@ const ItemList = ({
       maxWidth="xs"
     >
       <DialogTitle id="item-delete-dialog">
-        {"Are you sure?"}
+        <FormattedMessage id="DeleteConfirm.Text"/>
       </DialogTitle>
       <DialogContent>
-        <Box>Do you really want to delete {selectedItem.id}: {selectedItem.name}.</Box>
+        <Box><FormattedMessage id="DeleteConfirm.Content"/> {selectedItem.id}: {selectedItem.name}.</Box>
         <Box fontWeight={600}></Box>
       </DialogContent>
       <DialogActions className={classes.diaction}>
         <Button onClick={handleCloseDialog} color="primary" className={classes.button}>
-          Cancel
+          <FormattedMessage id="Button.Cancel"/>
         </Button>
         <Button onClick={handleSubmit} color="primary" className={classes.button}>
-          Delete
+          <FormattedMessage id="Button.Delete"/>
         </Button>
       </DialogActions>
     </Dialog>
@@ -261,7 +263,9 @@ const ItemList = ({
     <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="form-dialog-title">
       <form onSubmit={handleSubmit}>
       <DialogTitle id="form-dialog-title">
-        {selectedItem.id ? "Edit (ID:"+selectedItem.id+")" : "Create"}
+        {selectedItem.id ? 
+        <Box><FormattedMessage id="Button.Edit"/> (ID:{selectedItem.id})</Box> 
+        : <FormattedMessage id="Button.Create"/>}
         {isLogin ? <Box color="red" >You don't have Upload Permission. <Button onClick={handleLogin} color="secondary" >sign in</Button></Box> : null}
       </DialogTitle>
       <DialogContent>
@@ -270,7 +274,7 @@ const ItemList = ({
           variant="outlined"
           autoFocus
           id="name"
-          label="Name"
+          label=<FormattedMessage id="Label.Name"/>
           value={selectedItem.name}
           onChange={handleChangeValue("name")}
           error={errors.name ? true : false}
@@ -282,7 +286,7 @@ const ItemList = ({
           variant="outlined"
           
           id="price"
-          label="Price"
+          label=<FormattedMessage id="Label.Price"/>
           value={selectedItem.price}
           onChange={handleChangeValue("price")}
           error={errors.price ? true : false}
@@ -292,13 +296,13 @@ const ItemList = ({
         <TextField
         id="category"
         select
-        label="Category"
+        label=<FormattedMessage id="Label.Category"/>
         className={classes.textField}
         value={selectedItem.category_id ? selectedItem.category_id : ""}
         onChange={handleChangeValue("category_id")}
         margin="normal"
         variant="outlined"
-        helperText="Please select your category"
+        helperText=<FormattedMessage id="Label.HelperText"/>
         SelectProps={{
           native: true,
           MenuProps: {
@@ -323,7 +327,7 @@ const ItemList = ({
                       <Box><AddPhotoIcon className={classes.defaultImg} onClick={() => handleBrowseOpen()} /></Box>
                       <label className={classes.btnPicker}>
                         <TextField onChange={handleChooseFile} type="file" id="file" name="file" ref={inputFile} style={{ display: 'none' }} ></TextField>
-                        Choose File
+                        <FormattedMessage id="Label.ChooseFile"/>
                       </label>
                     </Box>
                     : 
@@ -351,10 +355,10 @@ const ItemList = ({
       </DialogContent>
       <DialogActions className={classes.diaction}>
         <Button onClick={handleCloseDialog} color="primary" className={classes.button}>
-          Cancel
+          <FormattedMessage id="Button.Cancel"/>
         </Button>
         <Button type="submit" color="primary" className={classes.button}>
-          Submit {loading ? <CircularProgress size={20} color="secondary" className={classes.progress} />: null}
+          <FormattedMessage id="Button.Submit"/> {loading ? <CircularProgress size={20} color="secondary" className={classes.progress} />: null}
         </Button>
       </DialogActions>
       </form>
@@ -379,19 +383,19 @@ const ItemList = ({
              {item.name}
             </Box>
             <Box>
-              Price: {item.price} Ks
+              <FormattedMessage id="Label.Price"/>: {item.price} Ks
             </Box>
           </CardContent>
           
           <CardActions className={classes.cardAction}>
             <Box ml="auto">
               <Button color="primary" onClick={handleEdit(item)}>
-                Edit
+                <FormattedMessage id="Button.Edit"/>
               </Button>
             </Box>
             <Box ml="auto" mr={0}>
               <Button color="primary" onClick={handleDelete(item)}>
-                Delete
+                <FormattedMessage id="Button.Delete"/>
               </Button>
             </Box>
           </CardActions>
@@ -405,7 +409,7 @@ const ItemList = ({
       <Grid container>
         <Grid item xs={6} sm={9} className={classes.gridControlPanel}>
           <Box ml={0} py={1} my="auto" fontWeight={600}  flexDirection="row" display="flex">
-            Artworks ({items.length})
+            <FormattedMessage id="Side.Artwork"/> ({items.length})
           </Box>
         </Grid>
         <Grid item xs={6} sm={2} className={classes.gridControlPanel}>
@@ -424,7 +428,7 @@ const ItemList = ({
                 },
               }}
               >
-              <option value="">All categories</option>
+              <option value="">All Categories</option>
               {categories.map((category) => {
                 return (<option key={category.id} value={category.id}>{category.name}</option>);
               })}
@@ -440,7 +444,7 @@ const ItemList = ({
               color="secondary" 
               onClick={handleEdit(initialItem)}
             >
-              Create
+              <FormattedMessage id="Button.Create"/>
             </Button>
           </Box>
         </Grid>
@@ -468,4 +472,7 @@ const ItemList = ({
   );
 };
 
+ItemList.propTypes = {
+  changeAuthState: PropTypes.func.isRequired,
+};
 export default ItemList;

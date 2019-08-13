@@ -1,0 +1,10 @@
+{
+  "globals": {
+    "Event": true,
+    "window": true,
+    "jest": true,
+    "expect": true,
+    "document": true,
+    "KeyboardEvent": true,
+  }
+}

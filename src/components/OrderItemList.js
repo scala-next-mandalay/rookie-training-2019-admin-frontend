@@ -1,26 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { lighten,makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import {Typography ,Paper,Grid,Table,TableBody,TableCell,TableHead,TablePagination,
-    TableRow,TableSortLabel,Toolbar,Tooltip,Box,Divider
+    TableRow,Toolbar,Box,Divider
 
 } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import FilterListIcon from '@material-ui/icons/FilterList';
-
-const TabContainer = (props) =>{
-  return (
-    <Typography component="div" style={{ padding: 1 * 1 }}>
-      {props.children}
-    </Typography>
-  );
-};
+import { FormattedMessage } from 'react-intl';
 
 const headRows = [
-  { id: 'name', numeric: false, disablePadding: false, label: 'Product Name' },
-  { id: 'unit_price', numeric: true, disablePadding: false, label: 'Item_Price' },
-  { id: 'quantity', numeric: true, disablePadding: false, label: 'Quantity' },
-  { id: 'total', numeric: true, disablePadding: false, label: 'Total ($)' },
+  { id: 'name', numeric: false, disablePadding: false, label: <FormattedMessage id="Label.ItemName"/> },
+  { id: 'unit_price', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.ItemPrice"/> },
+  { id: 'quantity', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.Quantity"/> },
+  { id: 'total', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.Total"/> },
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -28,11 +19,12 @@ const useStyles = makeStyles(theme => ({
         paddingTop:theme.spacing(1),
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
-        marginTop: theme.spacing(1),
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
      [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(5),
         marginRight: theme.spacing(5),
-    },
+    },overflowX:'auto',
   },
   paper: {
     width: '100%',
@@ -60,28 +52,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const EnhancedTableHead = (props) => {
-  const { order, orderBy, onRequestSort } = props;
-  const createSortHandler = property => event => {
-    onRequestSort(event, property);
-  };
-
   return (
     <TableHead>
       <TableRow>
         {headRows.map(row => (
           <TableCell
             key={row.id}
-            align={row.numeric ? 'right' : 'left'}
             padding={row.disablePadding ? 'none' : 'default'}
-            sortDirection={orderBy === row.id ? order : false}
+            align={row.numeric ? 'right' : 'left'}
           >
-            <TableSortLabel
-              active={orderBy === row.id}
-              direction={order}
-              onClick={createSortHandler(row.id)}
-            >
               {row.label}
-            </TableSortLabel>
           </TableCell>
         ))}
       </TableRow>
@@ -89,29 +69,10 @@ const EnhancedTableHead = (props) => {
   );
 };
 
-EnhancedTableHead.propTypes = {
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.string.isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
 const useToolbarStyles = makeStyles(theme => ({
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
-spacer: {
-    flex: '1 1 100%',
-  },
-  actions: {
-    color: theme.palette.text.secondary,
+  root: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(1),
   },
   title: {
     flex: '0 0 auto',
@@ -124,18 +85,10 @@ const EnhancedTableToolbar = props => {
 
   return (
     <Toolbar>
-        <div className={classes.title}>
-              <Typography variant="h5" gutterBottom style={{paddingTop:"20px"}}>
-                OrderItems
-              </Typography>
-      </div>
-      <div className={classes.spacer} />
-      <div className={classes.actions}>
-        <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon/>
-            </IconButton>
-          </Tooltip>
+      <div className={classes.title}>
+        <Typography variant="h5" gutterBottom style={{paddingTop:"20px"}}>
+          <FormattedMessage id="Orderitem.Title"/>
+        </Typography>
       </div>
     </Toolbar>
   );
@@ -143,16 +96,8 @@ const EnhancedTableToolbar = props => {
 
 const OrderItemList = ({orderitems, loading}) => {
   const classes = useStyles();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('date');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const handleRequestSort = (event, property)=> {
-    const isDesc = orderBy === property && order === 'desc';
-    setOrder(isDesc ? 'asc' : 'desc');
-    setOrderBy(property);
-  };
   
   // let obj = {};
   // rows=[];// eslint-disable-next-line
@@ -190,22 +135,46 @@ const OrderItemList = ({orderitems, loading}) => {
   const invoiceSubtotal = orderitems.length > 0 ? orderitems[0].total_price : null;
   const invoiceTaxes = 30;
   const invoiceTotal = invoiceSubtotal + invoiceTaxes;
+  const newPaper = (
+      <Grid container>
+        <Grid item xs={12} sm={12}>
+        <Typography variant="h6" gutterBottom className={classes.title}>
+            <FormattedMessage id="Label.Orderinfo"/>
+        </Typography>
+        <Divider />
+        </Grid>
+        <Grid item xs={12} sm={3} className={classes.info}>
+          <Box ml={0} my="auto" fontWeight={600}>
+            <Grid item sm={12}><FormattedMessage id="Label.ShippingAddress"/> </Grid>
+            <Grid item sm={12} className={classes.add}>{orderitems.length >0 ? orderitems[0].address1:null}</Grid>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={3} className={classes.info}>
+          <Box ml={0} my="auto" fontWeight={600}>
+            <Grid item sm={12}><FormattedMessage id="Label.BillingAddress"/> </Grid>
+            <Grid item sm={12} className={classes.add}>{orderitems.length >0 ? orderitems[0].address2:null}</Grid>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={3} className={classes.info}>
+          <Box ml={0} my="auto" fontWeight={600}>
+            <Grid item sm={12}><FormattedMessage id="Label.ShippingDate"/> </Grid> 
+            <Grid item sm={12} style={{paddingTop:'10px'}}>5/7/2019 10/7/2019</Grid>
+          </Box>
+        </Grid>
+      </Grid>
+  );
   const PCGrid=(
+      <Paper className={classes.root}>
+          <EnhancedTableToolbar />
               <div className={classes.tableWrapper}>
                 <Table
                     className={classes.table}
                     aria-labelledby="tableTitle"
                     >
-                    <EnhancedTableHead
-                      order={order}
-                      orderBy={orderBy}
-                      onRequestSort={handleRequestSort}
-                      rowCount={orderitems.length}
+                    <EnhancedTableHead classes={classes}
                     />
                     <TableBody>
                       {orderitems.map((orderitem, index) => {
-                        
-                        
                           const labelId = `enhanced-table-checkbox-${index}`;
         
                           return (
@@ -218,74 +187,34 @@ const OrderItemList = ({orderitems, loading}) => {
                                 {orderitem.name}
                               </TableCell>
                               <TableCell align="right">{ccyFormat(orderitem.unit_price)}</TableCell>
-                              <TableCell align="right">Ordered : {orderitem.quantity}</TableCell>
+                              <TableCell align="right">{orderitem.quantity}</TableCell>
                               <TableCell align="right">{ccyFormat(orderitem.unit_price * orderitem.quantity)}</TableCell>
                             </TableRow>
                           );
                         })}
                         <TableRow>
                           <TableCell colSpan={2} />
-                          <TableCell align="center">Subtotal</TableCell>
+                          <TableCell align="center"><FormattedMessage id="Label.SubTotal"/></TableCell>
                           <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell colSpan={2} />
-                          <TableCell align="center">Tax ({`${(TAX_RATE * 100).toFixed(0)} %`})</TableCell>
+                          <TableCell align="center"><FormattedMessage id="Label.Tax"/> ({`${(TAX_RATE * 100).toFixed(0)} %`})</TableCell>
                           <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell colSpan={2} />
-                          <TableCell align="center">Total</TableCell>
+                          <TableCell align="center"><FormattedMessage id="Label.Total"/></TableCell>
                           <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
                         </TableRow>
                       {emptyRows > 0 && (
                         <TableRow style={{ height: 30 * emptyRows }}>
-                          <TableCell colSpan={9} />
+                          <TableCell colSpan={6} />
                         </TableRow>
                       )}
                     </TableBody>
-                  </Table>
-                </div>
-  );
-  
-  const newPaper = (
-      <Grid container>
-        <Grid item xs={12} sm={12}>
-        <Typography variant="h6" gutterBottom className={classes.title}>
-            Order Information
-        </Typography>
-        <Divider />
-        </Grid>
-        <Grid item xs={12} sm={3} className={classes.info}>
-          <Box ml={0} my="auto" fontWeight={600}>
-            <Grid item sm={12}>Shipping Address </Grid>
-            <Grid item sm={12} className={classes.add}>{orderitems.length >0 ? orderitems[0].address1:null}</Grid>
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={3} className={classes.info}>
-          <Box ml={0} my="auto" fontWeight={600}>
-            <Grid item sm={12}>Billing Address </Grid>
-            <Grid item sm={12} className={classes.add}>{orderitems.length >0 ? orderitems[0].address2:null}</Grid>
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={3} className={classes.info}>
-          <Box ml={0} my="auto" fontWeight={600}>
-            <Grid item sm={12}>Shipping Date </Grid> 
-            <Grid item sm={12} style={{paddingTop:'10px'}}>5/7/2019 10/7/2019</Grid>
-          </Box>
-        </Grid>
-      </Grid>
-  );
-  const paperControl = (
-    <Paper className={classes.paper}>
-      <Grid container>
-        <Grid item xs={12} sm={12} className={classes.gridControlPanel}>
-          
-        <EnhancedTableToolbar />
-        </Grid>
-        <Grid item xs={12} sm={12} className={classes.gridControlPanel}>
-            <TabContainer>
-                {PCGrid}
+                </Table>
+              </div>
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
@@ -302,21 +231,16 @@ const OrderItemList = ({orderitems, loading}) => {
                   onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
                 {newPaper}
-            </TabContainer>
-        </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
   );
+  
+  
 
   return (
-    <div className={classes.root}>
-        {loading ? <h2>..... Loading</h2> : paperControl}
+    <div>
+        {loading ? <h2>..... Loading</h2> : PCGrid}
     </div>
   );
-};
-
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 const orderitemPropTypes = PropTypes.shape({

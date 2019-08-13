@@ -10,8 +10,6 @@ import ForgotPasswordSubmit from '../containers/auth/ForgotPasswordSubmit';
 
 const Login = ({handleDrawerToggle, totalQuantity, authState, changeAuthState, signOut, user, loading, history}) => {
 
- 
-
     const handleItem = event => {
       event.preventDefault();
       history.push("/items");

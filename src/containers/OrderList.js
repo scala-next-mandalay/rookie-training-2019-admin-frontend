@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import OrderList from '../components/OrderList';
-import {fetchAllOrders , setSearchText} from '../modules/orders';
+import {fetchAllOrders , setSearchText,sorting} from '../modules/orders';
 import { fetchAllOrderItems } from '../modules/orderitems';
 
 // const _filter = (rows, searchText) => {
@@ -41,8 +41,9 @@ export default connect(
     searchText: state.orders.searchText,
   }),
   (dispatch) => ({
-    setSearchText: (text) =>  dispatch(setSearchText(text)),
-    fetchAllOrders: () => dispatch(fetchAllOrders()),
+    fetchAllOrders: (num) => dispatch(fetchAllOrders(num)),
     fetchAllOrderItems: (id) => dispatch(fetchAllOrderItems(id)),
+    setSearchText: (text) => dispatch(setSearchText(text)),
+    sorting: (sortcol,sortorder) => dispatch(sorting(sortcol,sortorder)),
   })
 )(OrderList);

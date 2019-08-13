@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, AppBar, IconButton, Toolbar } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-
-
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Fade from '@material-ui/core/Fade';
+import { Box, AppBar, IconButton, Toolbar,Menu,MenuItem,Divider,ListItemIcon, ListItemText } from '@material-ui/core';
+import { 
+  Menu as MenuIcon,
+  AccountBalanceWallet as LogoutIcon
+} from '@material-ui/icons';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { FormattedMessage } from 'react-intl';
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -23,10 +22,15 @@ const useStyles = makeStyles(theme => ({
   rightIcon: {
     marginLeft: 'auto',
     marginRight: theme.spacing(1),
-  }
+  },
+  imgIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: '100%'
+  },
 }));
-
-const TitleBar = ({handleDrawerToggle, signOut}) => {
+const ITEM_HEIGHT = 60;
+const TitleBar = ({handleDrawerToggle, signOut,locale,setLocale}) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -43,6 +47,12 @@ const TitleBar = ({handleDrawerToggle, signOut}) => {
     setAnchorEl(null);
   }
   
+  const handleLocale = (event, locale) => {
+    event.preventDefault();
+    setLocale(locale);
+    setAnchorEl(null);
+  };
+  
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
@@ -56,29 +66,64 @@ const TitleBar = ({handleDrawerToggle, signOut}) => {
         >
           <MenuIcon />
         </IconButton>
-        <Box fontSize="h6.fontSize" flex={1}>Management Console</Box>
+        <Box fontSize="h6.fontSize" flex={1}><FormattedMessage id="Top.Title" defualtMessage="Change Title" /></Box>
  
         <IconButton
-              edge="end"
-              aria-label="Account of current user"
-              color="inherit"
-              aria-controls="fade-menu" 
-              aria-haspopup="true" 
-              onClick={handleClick}
+            color="inherit"
+            aria-label="More"
+            aria-controls="lang-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
         >
-          <AccountCircle />
+            <MoreVertIcon />
         </IconButton>
         <Menu
-        id="fade-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Fade}
-      >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            id="lang-menu"
+            anchorEl={anchorEl}
+            elevation={0}
+            getContentAnchorEl={null}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5,
+                width: 200,
+              },
+            }}
+          >
+      
+        <MenuItem disabled={true} >
+          <FormattedMessage id="Menu.Title" defualtMessage="Change Language" />
+        </MenuItem>
+        <Divider /> 
+        
+        <MenuItem className={ locale === 'ja' ? classes.selected : null }  onClick={event => handleLocale(event, 'ja')}>
+          <ListItemIcon>
+            <img src="https://cdn2.iconfinder.com/data/icons/world-flags-1-1/100/Japan-512.png" className={classes.imgIcon} alt='Japanese' />
+          </ListItemIcon>
+          <ListItemText> <FormattedMessage id="Menu.Japanese" defualtMessage="Japanese" /> </ListItemText>
+        </MenuItem>
+        <MenuItem className={ locale === 'en' ? classes.selected : null } onClick={event => handleLocale(event, 'en')}>
+          <ListItemIcon>
+            <img src="https://cdn3.iconfinder.com/data/icons/world-flags-circular-1/512/49-Great_Britain_United_Kingdom_UK_England_Union_Jack_country_flag_-512.png" className={classes.imgIcon} alt='English' />
+          </ListItemIcon>
+          <ListItemText> <FormattedMessage id="Menu.English" defualtMessage="English" /> </ListItemText>
+        </MenuItem>
+        <Divider />
+        <MenuItem  onClick={handleLogout} >
+          <ListItemIcon>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText> <FormattedMessage id="Menu.SingOut" defualtMessage="Sing Out" /> </ListItemText>
+        </MenuItem>
       </Menu>
       </Toolbar>
     </AppBar>

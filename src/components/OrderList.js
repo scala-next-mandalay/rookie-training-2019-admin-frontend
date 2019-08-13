@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { lighten,makeStyles } from '@material-ui/core/styles';
-import {Tabs,Tab,Typography,Box,TableHead,TableRow,TableCell,TableSortLabel,Grid,Toolbar,TextField,Paper,Table,TableBody,TablePagination,Button} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import {Tabs,Tab,Typography,Box,TableHead,TableRow,TableCell,TableSortLabel,Grid,Toolbar,TextField,Paper,Table,TableBody,Button} from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
+import { FormattedMessage } from 'react-intl';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -66,54 +66,17 @@ const useStyles = makeStyles(theme => ({
   tableWrapper: {
     overflowX: 'auto',
   },
-  title:{
-    margin:'15px',
-  },
-  info: {
-    display: 'flex',
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    marginLeft: theme.spacing(2),
-  },
-  add:{
-    fontWeight:10,
-    paddingTop:'10px'
-  },
 }));
 
-const desc = (a, b, orderBy) => {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-};
-
-const stableSort = (array, cmp) => {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = cmp(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-};
-
-const getSorting = (order, orderBy) => {
-  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-};
-
 const headRows = [
-  { id: 'created_at', numeric: false, disablePadding: false, label: 'Date' },
-  { id: 'first_name', numeric: true, disablePadding: false, label: 'Customer' },
-  { id: 'address1', numeric: true, disablePadding: false, label: 'Address1' },
-  { id: 'address2', numeric: true, disablePadding: false, label: 'Address2' },
-  { id: 'country', numeric: true, disablePadding: false, label: 'Country' },
-  { id: 'state', numeric: true, disablePadding: false, label: 'State' },
-  { id: 'city', numeric: true, disablePadding: false, label: 'City' },
-  { id: 'total_price', numeric: true, disablePadding: false, label: 'Total ($)' },
+  { id: 'created_at', numeric: false, disablePadding: false, label: <FormattedMessage id="Label.Date"/> },
+  { id: 'first_name', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.Customer"/> },
+  { id: 'address1', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.Address1"/> },
+  { id: 'address2', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.Address2"/> },
+  { id: 'country', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.Country"/> },
+  { id: 'state', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.State"/> },
+  { id: 'city', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.City"/> },
+  { id: 'total_price', numeric: true, disablePadding: false, label: <FormattedMessage id="Label.Total"/> },
 ];
 
 const EnhancedTableHead = (props) => {
@@ -151,48 +114,42 @@ EnhancedTableHead.propTypes = {
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
 };
 
 const useToolbarStyles = makeStyles(theme => ({
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
   title: {
     flex: '0 0 auto',
   },
+  spacer: {
+    flex: '1 1 100%',
+  },
 }));
 
-const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllOrders, orderItems}) => {
+const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllOrders, orderItems,sorting}) => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [text, setText] = React.useState("");
-
+  const [nextRow,setnextRow] = React.useState(0);
+  const [order,setOrder] = React.useState('asc');
+  const [orderBy,setOrderBy] = React.useState('created_at');
+  
   const isFirstRef = React.useRef(true);
   React.useEffect(() => {
     if (isFirstRef.current) {
-      fetchAllOrders();
+      isFirstRef.current = false;
+      fetchAllOrders(0);
     }
   });
-
+  
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === 'desc';
-    setOrder(isDesc ? 'asc' : 'desc');
+    setOrder(isDesc ? 'asc' : 'desc');  //true is asc
     setOrderBy(property);
+    sorting(property,isDesc ? 'asc' : 'desc');
   };
+  
   const handleChangeSearch = (event) => {
-    if(event.target.value == "")
+    if(event.target.value === "")
     {
       setSearchText("");
     }
@@ -204,20 +161,27 @@ const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllO
     setSearchText(text);
   };
   
+  const IncrementItem = () => {
+    setnextRow(nextRow + 10);
+    fetchAllOrders(nextRow+10);
+  };
+  const DecreaseItem = () => {
+    setnextRow(nextRow - 10);
+    fetchAllOrders(nextRow-10);
+  };
+  
   const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
 
     return (
-      <Toolbar
-        className={clsx(classes.root)}
-      >
+      <Toolbar>
         <div className={classes.title}>
           <div className="input-group">
 	      		<TextField
               autoFocus
               id="standard-search"
               type="search"
-              placeholder="Search"
+              placeholder ="Search"
               margin="dense"
               className={classes.textField}
               value={text}
@@ -228,30 +192,28 @@ const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllO
             </Button>
 	      	</div>
         </div>
+        <div className={classes.spacer} />
+        <div className={classes.actions}>
+          <Box flexDirection="row" display="flex">
+             <Button disabled={nextRow > 0 ? false : true} variant="contained" size="medium" color="primary" width="50" onClick={DecreaseItem} style={{marginRight:10}}>
+              <FormattedMessage id="Button.Prev"/>
+            </Button>
+            <Button disabled={orders.length < 10 ? true :false}  variant="contained" size="medium" color="primary" width="50" onClick={IncrementItem}>
+              <FormattedMessage id="Button.Next"/>
+            </Button>
+          </Box>
+        </div>
       </Toolbar>
     );
   };
-
-  const handleChangePage = (event, newPage) =>{
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) =>{
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-  
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, orders.length - page * rowsPerPage);
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
   const link = id=> () => {
     fetchAllOrderItems(id);
-    
   };
   const Show = (
-    <div>
+    
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -262,21 +224,17 @@ const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllO
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={orders.length}
             />
             <TableBody>
-              {stableSort(orders, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
+              {
+                orders.map((row, index) => {
                   return (
                     <TableRow
                       hover
                       tabIndex={-1}
                       key={row.id}
                     >
-                      <TableCell component="th" id={labelId} scope="row">
+                      <TableCell component="th" scope="row">
                         {row.created_at}
                       </TableCell>
                       <TableCell align="right"><Link to="/orderitems" replace onClick={link(row.id)}>{row.first_name} {row.last_name}</Link></TableCell>
@@ -288,31 +246,12 @@ const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllO
                       <TableCell align="right">{row.total_price}</TableCell>
                     </TableRow>
                   );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={9} />
-                </TableRow>
-              )}
+                })
+              }
             </TableBody>
           </Table>
         </div>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={orders.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'previous page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'next page',
-          }}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-        </div>
+        
   );
   
   return (
@@ -328,22 +267,22 @@ const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllO
             onChange={handleChange}
             aria-label="nav tabs example"
           >
-            <LinkTab label="Ordered" href="/drafts" {...a11yProps(0)} />
-            <LinkTab label="Delivered" href="/trash" {...a11yProps(1)} />
-            <LinkTab label="Cancelled" href="/spam" {...a11yProps(2)} />
+            <LinkTab label={<FormattedMessage id="Label.Ordered"/>} href="/drafts" {...a11yProps(0)} />
+            <LinkTab label={<FormattedMessage id="Label.Delivered"/>} href="/trash" {...a11yProps(1)} />
+            <LinkTab label={<FormattedMessage id="Label.Cancelled"/>} href="/spam" {...a11yProps(2)} />
           </Tabs>
         <TabPanel value={value} index={0}>
           {Show}
         </TabPanel>
         <TabPanel value={value} index={1}>
-          Page Two
+          
         </TabPanel>
         <TabPanel value={value} index={2}>
-          Page Three
+          
         </TabPanel>
         </Grid>
       </Grid>
-      </Paper>
+    </Paper>
   );
 
 };
