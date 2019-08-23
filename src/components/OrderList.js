@@ -125,7 +125,7 @@ const useToolbarStyles = makeStyles(theme => ({
   },
 }));
 
-const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllOrders, orderItems,sorting}) => {
+const OrderList = ({orders,setSearchText,fetchAllOrderItems,fetchAllOrders, orderItems,sorting}) => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const [text, setText] = React.useState("");
@@ -158,7 +158,9 @@ const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllO
     setText(chgText);
   };
   const AddText = () =>{
-    setSearchText(text);
+    if(text !== ""){
+      setSearchText(text);
+    }
   };
   
   const IncrementItem = () => {
@@ -187,7 +189,7 @@ const OrderList = ({orders,setSearchText,searchText,fetchAllOrderItems,fetchAllO
               value={text}
               onChange={handleChangeSearch}
              />
-	      		<Button onClick={AddText} variant="contained" size="medium" color="primary" width="50">
+	      		<Button key="search" onClick={AddText} variant="contained" size="medium" color="primary" width="50">
               <SearchIcon />
             </Button>
 	      	</div>

@@ -1,6 +1,9 @@
+/*global jest*/
+/*global expect*/
 import { itemsReducer, fetchAllItems, deleteItem, saveItem, setCategoryId } from '../items';
 import mockAxios from "axios";
 import { Storage } from 'aws-amplify';
+
 //Reducer testing
 describe("item reducer actions", () => {
   const initialState = {
@@ -8,11 +11,10 @@ describe("item reducer actions", () => {
     rows: [],
     error: "",
     loading: false,
-    closeDialog:false,
+    openDialog:false,
     selectedCateogryId: null,
     noMoreFetch: false,
   };
-  
   const state = {
     alreadyFetched: false,
     rows: [{ id: 1, name: "item1" }, { id: 2, name: "item2" }],
@@ -20,7 +22,7 @@ describe("item reducer actions", () => {
     selectedCateogryId: null,
     noMoreFetch: false,
     loading: false,
-    closeDialog:false,
+    openDialog: false,
   };
   
   it("item set already fetched", () => {
@@ -123,11 +125,9 @@ describe("item reducer actions", () => {
     expect(inputState).toEqual(expectedState);
   });
 });
-
 //=============================================================================
 //ActionCreators Testing
 //=============================================================================
-
 describe("ActionCreators Testing", () => {
   const getState = () => {
     return {
@@ -143,7 +143,7 @@ describe("ActionCreators Testing", () => {
   };
   const fileData ={
     type: "jpg"
-  }
+  };
   
   it("fetch all items with data", async () => {
     mockAxios.get.mockImplementationOnce(() =>
@@ -185,9 +185,10 @@ describe("ActionCreators Testing", () => {
   it("delete item", async () => {
     mockAxios.delete.mockImplementationOnce(() =>
       Promise.resolve({
-        data: { data: [{ id: 2, name: "item2" }] }
+        data: { data: [{ id: 1, name: "item1" }] }
       })
     );
+    
     const expectedAction_common=[{
       type :'ITEM_BEGIN_LOADING'
     }];
@@ -198,7 +199,8 @@ describe("ActionCreators Testing", () => {
     }];
     
     const dispatch = jest.fn();
-    await deleteItem(1)(dispatch, getState);
+    const item = { id:1 };
+    await deleteItem(item)(dispatch, getState);
     expect(dispatch.mock.calls[0]).toEqual(expectedAction_common);
     expect(dispatch.mock.calls[1]).toEqual(expectedAction);
   });
@@ -244,14 +246,14 @@ describe("ActionCreators Testing", () => {
       payload: { id: 1, name: "item 11" }
     }];
     
-    const dispatch_put = jest.fn();
     const dispatch_post = jest.fn();
+    const dispatch_put = jest.fn();
+    await saveItem(item,"abcd",fileData)(dispatch_post, getState);
+    expect(dispatch_post.mock.calls[0]).toEqual(expectedAction_common);
+    expect(dispatch_post.mock.calls[1]).toEqual(expectedAction_post);
     await saveItem(item_id,"abcd",fileData)(dispatch_put, getState);
     expect(dispatch_put.mock.calls[0]).toEqual(expectedAction_common);
     expect(dispatch_put.mock.calls[1]).toEqual(expectedAction_put);
-    await saveItem(item,"abcd",fileData)(dispatch_post, getState);
-    expect(dispatch_post.mock.calls[0]).toEqual(expectedAction_common);
-    expect(dispatch_post.mock.calls[1]).toEqual(expectedAction_post)
   });
   
   it("set category id ", async () => {

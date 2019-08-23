@@ -23,12 +23,10 @@ export const itemsReducer = (state = initialState, action) => {
       };
     case 'ITEM_FETCH_ROWS_DONE':
       return {
-        ...state,
-        rows: [...state.rows, ...action.payload],
-        loading: false
+        ..._getCommonState(state),
+        rows: [...state.rows, ...action.payload]
       };
-    case 'ITEM_DELETE_DONE':
-      return _item_delete_done(state, action);
+    
     case 'ITEM_POST_DONE':
       return {
         ..._getCommonState(state),
@@ -36,6 +34,10 @@ export const itemsReducer = (state = initialState, action) => {
       };
     case 'ITEM_PUT_DONE':
       return _item_put_done(state, action);
+      
+    case 'ITEM_DELETE_DONE':
+      return _item_delete_done(state, action);
+      
     case 'ITEM_SET_CATEGORY_ID':
       return {
         ...state,
@@ -87,7 +89,10 @@ const _item_delete_done = (state, action) => {
     }
   }
   
-  return _getCommonState(state);
+  return {
+    ..._getCommonState(state),
+    rows: newRows,
+  };
 };
 
 const _getCommonState = (state) => ({
@@ -125,7 +130,8 @@ export const saveItem = (item,fileName, fileData) => {
     const auth = {
         headers: {Authorization:'Bearer ' + token } 
     };
-    if (item.id === null) {
+    if (item.id === null || item.id === undefined) {
+      
       //INSERT
       const axRes = await axios.post(URL_POST_ITEM, updateData,auth);
       dispatch({
@@ -147,6 +153,10 @@ export const saveItem = (item,fileName, fileData) => {
 
 export const deleteItem = (item) => {
   return async (dispatch, getState) => {
+      
+      dispatch({
+        type: 'ITEM_BEGIN_LOADING'
+      });
       
       if (!getState().auth.user) {
         return;

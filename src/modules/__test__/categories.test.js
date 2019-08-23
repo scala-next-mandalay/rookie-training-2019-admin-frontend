@@ -1,3 +1,5 @@
+/*global jest*/
+/*global expect*/
 import { categoriesReducer, fetchAllCategories, deleteCategory, saveCategory } from '../categories';
 import mockAxios from "axios";
 
@@ -5,26 +7,10 @@ import mockAxios from "axios";
 
 describe("categories reducer actions", () => {
   const initialState = {
-    alreadyFetched: false,
-    loading:false,
-    closeDialog:false,
+    closeDialog: false,
+    loading: false,
     rows: [{ id: 2, test: "test2" }],
   };
-
-  it("category already fetch", () => {
-    const action = {
-      type: "CATEGORY_SET_ALREADY_FETCHED"
-    };
-
-    const expectedState = {
-      ...initialState,
-      alreadyFetched: true,
-    };
-
-    const inputState = categoriesReducer(initialState, action);
-    expect(inputState).toEqual(expectedState);
-
-  });
 
   it("category fetch row done", () => {
     const action = {
@@ -62,7 +48,7 @@ describe("categories reducer actions", () => {
 
     const action2 = {
       type: "CATEGORY_PUT_DONE",
-      payload: { id: 2, test: "test3" }
+      payload: { id: 2, test: "test2" }
     };
 
     const expectedState1 = {
@@ -72,9 +58,8 @@ describe("categories reducer actions", () => {
 
     const expectedState2 = {
       ...initialState,
-      rows: [{ id: 2, test: "test3" }]
+      rows: [{ id: 2, test: "test2" }]
     };
-
     expect(categoriesReducer(initialState, action1)).toEqual(expectedState1);
     expect(categoriesReducer(initialState, action2)).toEqual(expectedState2);
   });
@@ -114,7 +99,7 @@ describe("categories reducer actions", () => {
 describe("ActionCreators Testing", () => {
   const getState = () => {
     return {
-      categories: { alreadyFetched: false },
+      categories: { closeDialog: false,loading: false,rows:{id:1,name:"name1"} },
       auth: {
         user: {
           signInUserSession: {
@@ -125,21 +110,17 @@ describe("ActionCreators Testing", () => {
     };
   };
 
-  it("category already fetch", async () => {
+  it("fetch categories with data", async () => {
     mockAxios.get.mockImplementationOnce(() =>
       Promise.resolve({
         data: { data: [{ id: 1, name: "item1" }] }
       })
     );
-
-    const expectedAction_common=[{
-      type :'CATEGORY_BEGIN_LOADING'
+    
+    const expectedAction1 =[{
+      type: 'CATEGORY_BEGIN_LOADING'
     }];
-
-    const expectedAction1 = [{
-      type: 'CATEGORY_SET_ALREADY_FETCHED'
-    }];
-
+    
     const expectedAction2 = [{
       type: 'CATEGORY_FETCH_ROWS_DONE',
       payload: [{ id: 1, name: "item1" }]
@@ -147,9 +128,8 @@ describe("ActionCreators Testing", () => {
 
     const dispatch = jest.fn();
     await fetchAllCategories()(dispatch, getState);
-    expect(dispatch.mock.calls[0]).toEqual(expectedAction_common);
-    expect(dispatch.mock.calls[1]).toEqual(expectedAction1);
-    expect(dispatch.mock.calls[2]).toEqual(expectedAction2);
+    expect(dispatch.mock.calls[0]).toEqual(expectedAction1);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction2);
   });
 
   it("category delete", async () => {
@@ -158,21 +138,21 @@ describe("ActionCreators Testing", () => {
         data: "delete id 1"
       })
     );
-
-    const expectedAction = [{
+    
+    const expectedAction1 =[{
+      type: 'CATEGORY_BEGIN_LOADING'
+    }]; 
+    
+    const expectedAction2 = [{
       type: 'CATEGORY_DELETE_DONE',
       payload: 1
     }];
 
-    const expectedAction_common=[{
-      type :'CATEGORY_BEGIN_LOADING'
-    }];
-
     const dispatch = jest.fn();
-
-    await deleteCategory(1)(dispatch, getState);
-    expect(dispatch.mock.calls[0]).toEqual(expectedAction_common);
-    expect(dispatch.mock.calls[1]).toEqual(expectedAction);
+    const category={id:1, name:"item1"};
+    await deleteCategory(category)(dispatch, getState);
+    expect(dispatch.mock.calls[0]).toEqual(expectedAction1);
+    expect(dispatch.mock.calls[1]).toEqual(expectedAction2);
   });
 
   it("category save", async () => {
@@ -196,11 +176,11 @@ describe("ActionCreators Testing", () => {
         data: { data: { id: 1, name: "item 11" } }
       })
     );
-
-    const expectedAction_common=[{
-      type :'CATEGORY_BEGIN_LOADING'
+    
+    const expectedAction =[{
+      type: 'CATEGORY_BEGIN_LOADING'
     }];
-
+    
     const expectedAction_post = [{
       type: 'CATEGORY_POST_DONE',
       payload: { id: 5, name: "item 5" }
@@ -210,14 +190,14 @@ describe("ActionCreators Testing", () => {
       type: 'CATEGORY_PUT_DONE',
       payload: { id: 1, name: "item 11" }
     }];
-
+    
     const dispatch_put = jest.fn();
     const dispatch_post = jest.fn();
     await saveCategory(category_id)(dispatch_put, getState);
-    expect(dispatch_put.mock.calls[0]).toEqual(expectedAction_common);
+    expect(dispatch_put.mock.calls[0]).toEqual(expectedAction);
     expect(dispatch_put.mock.calls[1]).toEqual(expectedAction_put);
     await saveCategory(category)(dispatch_post, getState);
-    expect(dispatch_post.mock.calls[0]).toEqual(expectedAction_common);
-    expect(dispatch_post.mock.calls[1]).toEqual(expectedAction_post)
+    expect(dispatch_post.mock.calls[0]).toEqual(expectedAction);
+    expect(dispatch_post.mock.calls[1]).toEqual(expectedAction_post);
   });
 });

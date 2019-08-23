@@ -5,7 +5,7 @@ import FormTitle from './FormTitle';
 
 const ConfirmSignUp = React.memo(({ authState, changeAuthState, loading, error, email, confirmSignUp }) => {
 
-  const [form, setForm] = React.useState({email:"", password:""});
+  const [form, setForm] = React.useState({email:"", password:"",confirmationCode:""});
   
   const handleChangeValue = fieldName => event => {
     const newForm = {...form};
@@ -15,13 +15,13 @@ const ConfirmSignUp = React.memo(({ authState, changeAuthState, loading, error, 
 
   const handleSubmit = event => {
     event.preventDefault();
-    confirmSignUp(email, form['confirmationCode']);
+    confirmSignUp(email,form['confirmationCode']);
   };
 
   const content = (
     <Container component="main" maxWidth="xs">
       <form onSubmit={handleSubmit}>
-        <Box display="flex" flexDirction="column" mt={8}>
+        <Box display="flex" flexDirection="column" mt={8}>
           <FormTitle>Confirm your email</FormTitle>
           <Box display="flex" justifyContent="center" fontWeight={600} color="error.main">
             {error}

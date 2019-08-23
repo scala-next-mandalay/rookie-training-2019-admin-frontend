@@ -55,9 +55,6 @@ const MenuList = () => {
             </ListItemText>
           </ListItem>
         </Link>
-
-        
-        
       </List>
     </React.Fragment>
   );

@@ -38,7 +38,6 @@ import { fetchAllOrderItems } from '../modules/orderitems';
 export default connect(
   (state) => ({
     orders: state.orders.rows,
-    searchText: state.orders.searchText,
   }),
   (dispatch) => ({
     fetchAllOrders: (num) => dispatch(fetchAllOrders(num)),

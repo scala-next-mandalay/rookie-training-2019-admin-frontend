@@ -3,8 +3,9 @@ import { URL_GET_ALL_CATEGORIES, URL_POST_CATEGORY, URL_PUT_CATEGORY , URL_DELET
 import format from 'string-format';
 
 const initialState = {
-  alreadyFetched: false,
-  rows: []
+  rows: [],
+  closeDialog: false,
+  loading:false
 };
 
 //=============================================================================
@@ -12,25 +13,36 @@ const initialState = {
 //=============================================================================
 export const categoriesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'CATEGORY_SET_ALREADY_FETCHED':
-      return {
-        ...state,
-        alreadyFetched: true
-      };
     case 'CATEGORY_FETCH_ROWS_DONE':
       return {
         ...state,
-        rows: action.payload
+        rows: action.payload,
+        loading: false
       };
+      
     case 'CATEGORY_POST_DONE':
       return {
-        ...state,
+        ..._getCommonState(state),
         rows: [...state.rows, action.payload]
       };
+      
     case 'CATEGORY_PUT_DONE':
       return _category_put_done(state, action);
+      
     case 'CATEGORY_DELETE_DONE':
       return _category_delete_done(state, action);
+    
+    case 'CATEGORY_CLOSE_DIALOG':
+      return {
+        ...state,
+        closeDialog: action.payload
+      };
+      
+    case 'CATEGORY_BEGIN_LOADING':
+      return {
+        ...state,
+        loading: true
+      };
     default:
       return state;
   }
@@ -49,7 +61,7 @@ const _category_put_done = (state, action) => {
   }
   
   return {
-    ...state,
+    ..._getCommonState(state),
     rows: newRows
   };
 };
@@ -63,10 +75,16 @@ const _category_delete_done = (state, action) => {
   }
   
   return {
-    ...state,
+    ..._getCommonState(state),
     rows: newRows
   };
 };
+
+const _getCommonState = (state) => ({
+  ...state,
+  loading: false,
+  closeDialog: false,
+});
 
 //=============================================================================
 //ActionCreators
@@ -75,6 +93,11 @@ const _category_delete_done = (state, action) => {
 
 export const saveCategory = (category) => {
   return async (dispatch, getState) => {
+    
+    dispatch({
+        type: 'CATEGORY_BEGIN_LOADING'
+      });
+      
     if (!getState().auth.user) {
         return;
       }
@@ -106,6 +129,11 @@ export const saveCategory = (category) => {
 
 export const deleteCategory = (category) => {
   return async (dispatch, getState) => {
+    
+      dispatch({
+        type: 'CATEGORY_BEGIN_LOADING'
+      });
+      
       if (!getState().auth.user) {
         return;
       }
@@ -129,18 +157,15 @@ export const deleteCategory = (category) => {
 export const fetchAllCategories = () => {
   return async (dispatch, getState) => {
     //console.log('fetchAllCategories:START')
-    /*if (getState().categories.alreadyFetched) {
-        //return;
-    }
-
+    
     dispatch({
-        type: 'CATEGORY_SET_ALREADY_FETCHED'
-    });*/
+      type: 'CATEGORY_BEGIN_LOADING'
+    });
     
     if (!getState().auth.user) {
         return;
       }
-  
+
     const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
 
     const auth = {
@@ -158,3 +183,8 @@ export const fetchAllCategories = () => {
     });
   };
 };
+
+export const dialogBox = (val) => ({
+  type: 'CATEGORY_CLOSE_DIALOG',
+  payload: val
+})

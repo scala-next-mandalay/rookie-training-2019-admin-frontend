@@ -2,8 +2,6 @@ import axios from 'axios';
 import { URL_REST_ORDERS } from '../constants';
 
 const initialState = {
-  alreadyFetched: false,
-  searchText: '',
   rows: [],
 };
 
@@ -12,11 +10,6 @@ const initialState = {
 //=============================================================================
 export const ordersReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'SET_ALREADY_FETCHED':
-      return {
-        ...state,
-        alreadyFetched: true
-      };
     case 'FETCH_ORDERS_DONE':
       return {
         ...state,
@@ -26,11 +19,6 @@ export const ordersReducer = (state = initialState, action) => {
       return {
         ...state,
         rows: action.payload
-      };
-    case 'ORDER_ITEM_CLICK':
-      return {
-        ...state,
-       clickedOrderId : action.payload
       };
     case 'SORTING_ORDER_COLUMNS':
       return {
@@ -53,7 +41,7 @@ export const fetchAllOrders = (num) => {
     }
 
     const token = getState().auth.user.signInUserSession.accessToken.jwtToken;
-    console.log('Token:',token);
+    //console.log('Token:',token);
     const auth = {
       headers: { Authorization: 'Bearer ' + token }
     };

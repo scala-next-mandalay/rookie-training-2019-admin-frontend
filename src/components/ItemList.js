@@ -126,7 +126,6 @@ const ItemList = ({ intl,
   setOpenDialog
 }) => {
   const classes = useStyles();
-  
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [isDelete, setIsDelete] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -152,6 +151,9 @@ const ItemList = ({ intl,
   };
 
   const handleCloseDialog = () => {
+    //console.log('BeforeSl :',selectedItem);
+    selectedItem.category_id = "";
+    // console.log('AfterSl :',selectedItem);
     setSelectedImg(null);
     setOpenDialog(false);
     setIsLogin(false);
@@ -179,7 +181,9 @@ const ItemList = ({ intl,
           }
           else 
           {
-            saveItem(selectedItem, fileName, file);
+            if(selectedItem.name !== "" && selectedItem.price !== "" && selectedItem.category_id !== "" ) {
+              saveItem(selectedItem, fileName, file);
+            }
           }
       }
     }
@@ -334,7 +338,7 @@ const ItemList = ({ intl,
                     <Box>
                       <img src={selectedImg} onClick={() => handleBrowseOpen()} className={classes.itemImg} alt={selectedItem.image}  />
                       <label>
-                        <TextField onChange={handleChooseFile} type="file" id="file" name="file" ref={inputFile} style={{ display: 'none' }} ></TextField>
+                        <TextField onChange={handleChooseFile}  type="file" id="file" name="file" ref={inputFile} style={{ display: 'none' }} ></TextField>
                       </label>
                     </Box>
                   }
@@ -358,7 +362,7 @@ const ItemList = ({ intl,
           <FormattedMessage id="Button.Cancel"/>
         </Button>
         <Button type="submit" color="primary" className={classes.button}>
-          <FormattedMessage id="Button.Submit"/> {loading ? <CircularProgress size={20} color="secondary" className={classes.progress} />: null}
+          <FormattedMessage id="Button.Submit"/>{loading ? <CircularProgress size={20} color="secondary" className={classes.progress} />: null}
         </Button>
       </DialogActions>
       </form>
@@ -439,7 +443,7 @@ const ItemList = ({ intl,
           <Box mr={1}>
             <Button 
               fullWidth
-              variant="contained" 
+              variant="contained"   
               size="small" 
               color="secondary" 
               onClick={handleEdit(initialItem)}
@@ -471,7 +475,9 @@ const ItemList = ({ intl,
     </InfiniteScroll>
   );
 };
-
+InfiniteScroll.propTypes = {
+  loadMore:PropTypes.func,
+};
 ItemList.propTypes = {
   changeAuthState: PropTypes.func.isRequired,
 };

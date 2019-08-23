@@ -1,43 +1,54 @@
-import { ordersReducer, setRequestParams, postOrder } from '../order';
+/*global jest*/
+/*global expect*/
+import { ordersReducer, fetchAllOrders, setSearchText,sorting } from '../orders';
 import mockAxios from "axios";
-import { async } from 'q';
-
+//import { async } from 'q';
 //Reducer testing
-describe("categories reducer actions", () => {
+describe("order reducer actions", () => {
   const initialState = {
-    postResultObj: null,
-    requestParams: null,
+    rows: [],
   };
   
-  it("order set request params", () => {
+  const state = {
+    rows: [{ id: 1, created_at: "toko"}],
+  };
+  
+  it("order fetch rows done", () => {
     const action = {
-      type: "ORDERS_SET_REQUEST_PARAMS",
-      payload: { first_name: "toko", last_name: "toko" }
+      type: 'FETCH_ORDERS_DONE',
+      payload: [{ id: 10, created_at: "22/7/2019"}]
     };
-    
     const expectedState = {
       ...initialState,
-      requestParams: { first_name: "toko", last_name: "toko" },
-      postResultObj: null
+      rows: [...initialState.rows, ...[{ id: 10, created_at: "22/7/2019"}]]
     };
-    
     const inputState = ordersReducer(initialState, action);
     expect(inputState).toEqual(expectedState);
   });
   
-  it("make order", () => {
+  it("order set search text", () => {
     const action = {
-      type: "ORDERS_POST_DONE",
-      payload: { first_name: "toko", last_name: "toko" }
+      type: 'ORDER_SET_SEARCH_TEXT',
+      payload: 'toko'
     };
-    
     const expectedState = {
-      ...initialState,
-      requestParams: null,
-      postResultObj: { first_name: "toko", last_name: "toko" }
+      ...state,
+      rows: 'toko'
     };
-    
-    const inputState = ordersReducer(initialState, action);
+    const inputState = ordersReducer(state, action);
+    expect(inputState).toEqual(expectedState);
+  });
+  
+  it("order sorting", () => {
+    const action = {
+      type: 'SORTING_ORDER_COLUMNS',
+      payload: [{sortcol:'created_at',sortorder:'desc'}]
+    };
+    const expectedState = {
+      ...state,
+      rows: [{sortcol:'created_at',sortorder:'desc'}]
+    };
+    const inputState = ordersReducer(state, action);
     expect(inputState).toEqual(expectedState);
   });
   
@@ -45,9 +56,11 @@ describe("categories reducer actions", () => {
     const action = {
       type: "Default"
     };
+    
     const expectedState = {
       ...initialState
     };
+    
     const inputState = ordersReducer(initialState, action);
     expect(inputState).toEqual(expectedState);
   });
@@ -60,16 +73,7 @@ describe("categories reducer actions", () => {
 describe("ActionCreators Testing", () => {
   const getState = () => {
     return {
-      cart: {
-        totalPrice: 8000,
-        rows: [
-          { id: 1, quantity: 2, price: 2000 },
-          { id: 2, quantity: 4, price: 1000 }
-        ]
-      },
-      order:{
-        requestParams: { id: 1, quantity: 2, price: 2000 }
-      },
+      orders: { rows:{ id: 10, created_at: "22/7/2019"} },
       auth: {
         user: {
           signInUserSession: {
@@ -79,47 +83,65 @@ describe("ActionCreators Testing", () => {
       }
     };
   };
- 
-  const addressFrom = {
-    first_name: "Manda",
-    last_name: "lay",
-  };
   
-  it("set request params", () => {
-    const expectedAction = [{
-      type: 'ORDERS_SET_REQUEST_PARAMS',
-      payload: {
-        ...addressFrom,
-        total_price: 8000,
-        item_id_array: [1, 2],
-        item_qty_array: [2, 4],
-        item_price_array: [2000, 1000]
-      }
-    }];
-    
-    const dispatch = jest.fn();
-    setRequestParams(addressFrom)(dispatch, getState);
-    expect(dispatch.mock.calls[0]).toEqual(expectedAction)
-  });
-  
-  it("post order", async() => {
-    mockAxios.post.mockImplementationOnce(() =>
+  it("order fetched", async () => {
+    mockAxios.get.mockImplementationOnce(() =>
       Promise.resolve({
-        data: { data: { id: 1, totalPrice: 8000 } }
+        data: { data: {id: 10, created_at: "22/7/2019"}}
       })
     );
-    const expectedAction1 = [{
-      type: 'ORDERS_POST_DONE',
-      payload: { id: 1, totalPrice: 8000 }
-    }];
-    
-    const expectedAction2 = [{
-      type: 'CART_CLEAR_CART'
+
+    const expectedAction = [{
+      type: 'FETCH_ORDERS_DONE',
+      payload: {id: 10, created_at: "22/7/2019"}
     }];
     
     const dispatch = jest.fn();
-    await postOrder()(dispatch, getState);
-    expect(dispatch.mock.calls[0]).toEqual(expectedAction1);
-    expect(dispatch.mock.calls[1]).toEqual(expectedAction2)
+    const start = 13;
+    await fetchAllOrders(start)(dispatch, getState);
+    
+    expect(dispatch.mock.calls[0]).toEqual(expectedAction);
+    expect(mockAxios.get).toHaveBeenCalledWith("http://mbrookietraining2019adminbackend-env.mdknpzkmj7.ap-northeast-1.elasticbeanstalk.com/api/orders?start=13&sortcol=created_at&sortorder=desc",
+    {"headers": {"Authorization": "Bearer 123456789"}});
   });
+  
+  it("order set search text", async () => {
+    mockAxios.get.mockImplementationOnce(() =>
+      Promise.resolve({
+        data: { data: [{id: 10, first_name: "toko"}] }
+      })
+    );
+    
+    const expectedAction = [{
+      type: 'ORDER_SET_SEARCH_TEXT',
+      payload: [{id: 10, first_name: "toko"}]
+    }];
+    const dispatch = jest.fn();
+    const text = "toko";
+    await setSearchText(text)(dispatch, getState);
+    expect(dispatch.mock.calls[0]).toEqual(expectedAction);
+    expect(mockAxios.get).toHaveBeenCalledWith("http://mbrookietraining2019adminbackend-env.mdknpzkmj7.ap-northeast-1.elasticbeanstalk.com/api/orders?search=toko",
+    {"headers": {"Authorization": "Bearer 123456789"}});
+  });
+  
+  it("order sorting", async () => {
+    mockAxios.get.mockImplementationOnce(() =>
+      Promise.resolve({
+        data: { data: [{sortcol:'created_at',sortorder:'desc'}] }
+      })
+    );
+    
+    const expectedAction = [{
+      type: 'SORTING_ORDER_COLUMNS',
+      payload: [{sortcol:'created_at',sortorder:'desc'}]
+    }];
+    const dispatch = jest.fn();
+    const col = 'created_at';
+    const order = 'desc';
+    await sorting(col,order)(dispatch, getState);
+    expect(dispatch.mock.calls[0]).toEqual(expectedAction);
+    expect(mockAxios.get).toHaveBeenCalledWith("http://mbrookietraining2019adminbackend-env.mdknpzkmj7.ap-northeast-1.elasticbeanstalk.com/api/orders?sortcol=created_at&sortorder=desc",
+    {"headers": {"Authorization": "Bearer 123456789"}});
+  });
+  
 });

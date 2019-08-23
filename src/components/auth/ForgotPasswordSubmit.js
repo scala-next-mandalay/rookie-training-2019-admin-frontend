@@ -5,7 +5,7 @@ import FormTitle from './FormTitle';
 
 const ForgotPasswordSubmit = React.memo(({ authState, changeAuthState, loading, error, email, forgotPasswordSubmit }) => {
 
-  const [form, setForm] = React.useState({email:"", password:""});
+  const [form, setForm] = React.useState({email:"", password:"",confirmationCode:""});
   
   const handleChangeValue = fieldName => event => {
     const newForm = {...form};
@@ -15,7 +15,7 @@ const ForgotPasswordSubmit = React.memo(({ authState, changeAuthState, loading, 
 
   const handleSubmit = event => {
     event.preventDefault();
-    forgotPasswordSubmit(email, form['confirmationCode'], form['password']);
+    forgotPasswordSubmit(email, form['password'], form['confirmationCode']);
   };
   
   const handleResendSignUp = event => {
@@ -37,6 +37,20 @@ const ForgotPasswordSubmit = React.memo(({ authState, changeAuthState, loading, 
               label="Confirmation Code"
               onChange={handleChangeValue("confirmationCode")} 
               value={form.confirmationCode}
+              variant="outlined"
+              required
+              fullWidth
+            />
+          </Box>
+          
+          <Box width="100%" my={2}>
+            <TextField
+              id="password"
+              label="New Password"
+              type="password"
+              autoComplete="new-password"
+              onChange={handleChangeValue("password")}
+              value={form.password}
               variant="outlined"
               required
               fullWidth

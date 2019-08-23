@@ -1,34 +1,32 @@
-import { connect } from 'react-redux';
-import ItemList from '../components/ItemList';
-import { deleteItem,saveItem,setCategoryId,fetchAllItems,setOpenDialog } from '../modules/items';
-import { uploadImage } from '../modules/image';
-import { changeAuthState } from '../modules/auth';
-
+import { connect } from 'react-redux'
+import ItemList from '../components/ItemList'
+import { saveItem, deleteItem, setCategoryId, fetchAllItems, setOpenDialog } from '../modules/items'
+import { uploadImage } from '../modules/image'
+import { changeAuthState } from '../modules/auth'
 const _getItemsByCategory = (rows, categoryId) => {
-  if (categoryId <= 0) {
-    return rows;
+  if (categoryId === null) {
+    return rows
   }
   else {
-    const newRows = rows.filter(t => t.category_id === Number(categoryId));
-    return newRows;
+    const newRows = rows.filter(t => Number(t.category_id) === Number(categoryId))
+    return newRows
   }
-};
-
+}
 export default connect(
   (state) => ({
     items: _getItemsByCategory(state.items.rows, state.items.selectedCateogryId),
     categories: state.categories.rows,
     noMoreFetch: state.items.noMoreFetch,
-    loading: state.items.loading,
-    openDialog: state.items.openDialog,
+    loading:state.items.loading,
+    openDialog:state.items.openDialog
   }),
   (dispatch) => ({
-    saveItem: (item,fileName,fileData) =>  dispatch(saveItem(item,fileName,fileData)),
+    saveItem: (item, fileName, fileData) =>  dispatch(saveItem(item, fileName, fileData)),
     deleteItem: (id) =>  dispatch(deleteItem(id)),
     setCategoryId: (categoryId) =>  dispatch(setCategoryId(categoryId)),
     fetchAllItems: () => dispatch(fetchAllItems()),
-    uploadImage: (fileName, fileData) => dispatch(uploadImage(fileName, fileData)),
-    setOpenDialog: (val) => dispatch(setOpenDialog(val)),
+    uploadImage: (fileName, fileData, contentType) => dispatch(uploadImage(fileName, fileData, contentType)),
     changeAuthState: (value) => dispatch(changeAuthState(value)),
+    setOpenDialog:(value) => dispatch(setOpenDialog(value))
   })
-)(ItemList);
+)(ItemList)

@@ -5,6 +5,7 @@ import { Box, Container, Paper, Dialog,
 DialogTitle,DialogContent, TextField, DialogActions ,Grid, Button } from '@material-ui/core';
 import { validateForm } from '../util';
 import { FormattedMessage } from 'react-intl';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -28,10 +29,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
+const CategoryList = ({ categories, saveCategory,deleteCategory,closeDialog,dialogBox,loading}) => {
   // const [value, setValue] = React.useState(null)
   const classes = useStyles();
-  const [dialogOpen, setDialogOpen] = React.useState(false);
   const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [isDelete, setIsDelete] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -45,13 +45,13 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
   
   const handleEdit = category => event => {
     setSelectedCategory(category);
-    setDialogOpen(true);
+    dialogBox(true);
     setIsDelete(false);
     setErrors({});
   };
   
   const handleCloseDialog = () => {
-    setDialogOpen(false);
+    dialogBox(false);
     setSelectedCategory(null);
   };
   
@@ -67,20 +67,20 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
       }
       else {
         if (isDelete) {
-          console.log(selectedCategory);
           deleteCategory(selectedCategory);
         }
-        else {
-          saveCategory(selectedCategory);
+        else{
+          if(selectedCategory.name !== "") {
+            saveCategory(selectedCategory);
+          }
         }
-        handleCloseDialog();
       }
     }
   };
 
   const handleDelete = (category) => event => {
     setSelectedCategory(category);
-    setDialogOpen(true);
+    dialogBox(true);
     setIsDelete(true);
     setErrors({});
   };
@@ -88,7 +88,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
   
   const deleteDialog = (selectedCategory && isDelete) ? (
     <Dialog 
-      open={dialogOpen} 
+      open={closeDialog} 
       onClose={handleCloseDialog} 
       aria-labelledby="category-delete-dialog"
       fullWidth
@@ -105,8 +105,8 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
         <Button onClick={handleCloseDialog} color="primary" className={classes.button}>
           <FormattedMessage id="Button.Cancel"/>
         </Button>
-        <Button onClick={handleSubmit} color="primary" className={classes.button}>
-          <FormattedMessage id="Button.Delete"/>
+        <Button onClick={handleSubmit} disabled={loading} color="primary" className={classes.button}>
+          <FormattedMessage id="Button.Delete"/>{loading ? <CircularProgress size={20} color="secondary" className={classes.progress} />: null}
         </Button>
       </DialogActions>
     </Dialog>
@@ -114,7 +114,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
   
   const saveDialog = (selectedCategory && isDelete === false) ? (
     <Dialog 
-      open={dialogOpen} 
+      open={closeDialog} 
       onClose={handleCloseDialog} 
       aria-labelledby="category-save-dialog"
       fullWidth
@@ -130,10 +130,10 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
       </DialogTitle>
       <DialogContent>
         <TextField
+          id="name"
           variant="outlined"
           autoFocus
           error={errors.name ? true : false}
-          id="name"
           label={<FormattedMessage id="Button.Edit"/>}
           value={selectedCategory.name}
           onChange={handleChangeValue("name")}
@@ -145,7 +145,7 @@ const CategoryList = ({ categories, category, saveCategory,deleteCategory}) => {
           <FormattedMessage id="Button.Cancel"/>
         </Button>
         <Button onClick={handleSubmit} color="primary" className={classes.button}>
-          <FormattedMessage id="Button.Submit"/>
+          <FormattedMessage id="Button.Submit"/>{loading ? <CircularProgress size={20} color="secondary" className={classes.progress} />: null}
         </Button>
       </DialogActions>
     </Dialog>

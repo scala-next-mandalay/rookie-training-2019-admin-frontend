@@ -1,0 +1,226 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CategoryList component matches the snapshot 1`] = `
+<div
+  className="MuiContainer-root MuiContainer-maxWidthXl"
+>
+  <div
+    className="MuiPaper-root MuiPaper-elevation1 makeStyles-paper-1 MuiPaper-rounded"
+  >
+    <div
+      className="MuiGrid-root MuiGrid-container"
+    >
+      <div
+        className="MuiGrid-root makeStyles-gridControlPanel-2 MuiGrid-item MuiGrid-grid-xs-6 MuiGrid-grid-sm-11"
+      >
+        <div
+          className="MuiBox-root MuiBox-root-143"
+        >
+          <span>
+            Artists
+          </span>
+           (
+          2
+          )
+        </div>
+      </div>
+      <div
+        className="MuiGrid-root makeStyles-gridControlPanel-2 MuiGrid-item MuiGrid-grid-xs-6 MuiGrid-grid-sm-1"
+      >
+        <div
+          className="MuiBox-root MuiBox-root-144"
+        >
+          <button
+            className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeSmall MuiButton-fullWidth"
+            disabled={false}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={0}
+            type="button"
+          >
+            <span
+              className="MuiButton-label"
+            >
+              <span>
+                Create
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="MuiGrid-root MuiGrid-container"
+  >
+    <div
+      className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-4 MuiGrid-grid-lg-3"
+    >
+      <div
+        className="MuiPaper-root MuiPaper-elevation1 makeStyles-paper-1 MuiPaper-rounded"
+      >
+        <div
+          className="MuiBox-root MuiBox-root-165"
+        >
+          <div
+            className="MuiBox-root MuiBox-root-166"
+          >
+            ID: 
+            1
+          </div>
+          <div
+            className="MuiBox-root MuiBox-root-167"
+          >
+            a
+          </div>
+          <div
+            className="MuiBox-root MuiBox-root-168"
+          >
+            <button
+              className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiButton-label"
+              >
+                <span>
+                  Edit
+                </span>
+              </span>
+            </button>
+            <button
+              className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiButton-label"
+              >
+                <span>
+                  Delete
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-4 MuiGrid-grid-lg-3"
+    >
+      <div
+        className="MuiPaper-root MuiPaper-elevation1 makeStyles-paper-1 MuiPaper-rounded"
+      >
+        <div
+          className="MuiBox-root MuiBox-root-169"
+        >
+          <div
+            className="MuiBox-root MuiBox-root-170"
+          >
+            ID: 
+            2
+          </div>
+          <div
+            className="MuiBox-root MuiBox-root-171"
+          >
+            b
+          </div>
+          <div
+            className="MuiBox-root MuiBox-root-172"
+          >
+            <button
+              className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiButton-label"
+              >
+                <span>
+                  Edit
+                </span>
+              </span>
+            </button>
+            <button
+              className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiButton-label"
+              >
+                <span>
+                  Delete
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
