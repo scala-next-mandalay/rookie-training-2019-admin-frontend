@@ -3,7 +3,10 @@
 import { orderitemsReducer, fetchAllOrderItems } from '../orderitems';
 import mockAxios from "axios";
 
+//=============================================================================
 //Reducer testing
+//=============================================================================
+
 describe("orderitem reducer actions", () => {
   const initialState = {
     rows: [],

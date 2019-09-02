@@ -152,7 +152,7 @@ const ItemList = ({ intl,
 
   const handleCloseDialog = () => {
     //console.log('BeforeSl :',selectedItem);
-    selectedItem.category_id = "";
+    //selectedItem.category_id = "";
     // console.log('AfterSl :',selectedItem);
     setSelectedImg(null);
     setOpenDialog(false);
@@ -298,6 +298,7 @@ const ItemList = ({ intl,
           required
         />
         <TextField
+        fullWidth
         id="category"
         select
         label=<FormattedMessage id="Label.Category"/>
@@ -306,7 +307,6 @@ const ItemList = ({ intl,
         onChange={handleChangeValue("category_id")}
         margin="normal"
         variant="outlined"
-        helperText=<FormattedMessage id="Label.HelperText"/>
         SelectProps={{
           native: true,
           MenuProps: {

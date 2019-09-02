@@ -2,8 +2,11 @@
 /*global expect*/
 import { ordersReducer, fetchAllOrders, setSearchText,sorting } from '../orders';
 import mockAxios from "axios";
-//import { async } from 'q';
+
+//=============================================================================
 //Reducer testing
+//=============================================================================
+
 describe("order reducer actions", () => {
   const initialState = {
     rows: [],

@@ -22,6 +22,7 @@
     "react-scripts": "3.0.1",
     "react-test-renderer": "^16.9.0",
     "redux": "^4.0.4",
+    "redux-test-utils": "^0.3.0",
     "redux-thunk": "^2.3.0",
     "string-format": "^2.0.0"
   },

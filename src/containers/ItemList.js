@@ -1,17 +1,18 @@
-import { connect } from 'react-redux'
-import ItemList from '../components/ItemList'
-import { saveItem, deleteItem, setCategoryId, fetchAllItems, setOpenDialog } from '../modules/items'
-import { uploadImage } from '../modules/image'
-import { changeAuthState } from '../modules/auth'
+import { connect } from 'react-redux';
+import ItemList from '../components/ItemList';
+import { saveItem, deleteItem, setCategoryId, fetchAllItems, setOpenDialog } from '../modules/items';
+import { uploadImage } from '../modules/image';
+import { changeAuthState } from '../modules/auth';
 const _getItemsByCategory = (rows, categoryId) => {
   if (categoryId === null) {
-    return rows
+    return rows;
   }
   else {
-    const newRows = rows.filter(t => Number(t.category_id) === Number(categoryId))
-    return newRows
+    const newRows = rows.filter(t => Number(t.category_id) === Number(categoryId));
+    console.log('Out :',newRows);
+    return newRows;
   }
-}
+};
 export default connect(
   (state) => ({
     items: _getItemsByCategory(state.items.rows, state.items.selectedCateogryId),
@@ -29,4 +30,4 @@ export default connect(
     changeAuthState: (value) => dispatch(changeAuthState(value)),
     setOpenDialog:(value) => dispatch(setOpenDialog(value))
   })
-)(ItemList)
+)(ItemList);

@@ -3,7 +3,9 @@
 import { categoriesReducer, fetchAllCategories, deleteCategory, saveCategory } from '../categories';
 import mockAxios from "axios";
 
+//=============================================================================
 //Reducer testing
+//=============================================================================
 
 describe("categories reducer actions", () => {
   const initialState = {

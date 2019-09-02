@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import ForgotPasswordSubmit from '../../components/auth/ForgotPasswordSubmit';
-import { changeAuthState, forgotPasswordSubmit,resendSingUp } from '../../modules/auth';
+import { changeAuthState, forgotPasswordSubmit,resendSignUp } from '../../modules/auth';
 
 export default connect(
   (state) => ({
@@ -12,6 +12,6 @@ export default connect(
   (dispatch) => ({
     changeAuthState: (value) => dispatch(changeAuthState(value)),
     forgotPasswordSubmit: (email, code, password) => dispatch(forgotPasswordSubmit(email, code, password)),
-    resendSingUp: (email) => dispatch(resendSingUp(email))
+    resendSignUp: (email) => dispatch(resendSignUp(email))
   })
 )(ForgotPasswordSubmit);

@@ -1,0 +1,413 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrderItemList component matches the snapshot 1`] = `
+<div>
+  <div
+    className="MuiPaper-root MuiPaper-elevation1 makeStyles-root-1 MuiPaper-rounded"
+  >
+    <div
+      className="MuiToolbar-root MuiToolbar-regular MuiToolbar-gutters"
+    >
+      <div
+        className="makeStyles-title-36"
+      >
+        <h5
+          className="MuiTypography-root MuiTypography-h5 MuiTypography-gutterBottom"
+          style={
+            Object {
+              "paddingTop": "20px",
+            }
+          }
+        >
+          <span>
+            OrderItems
+          </span>
+        </h5>
+      </div>
+    </div>
+    <div
+      className="makeStyles-tableWrapper-4"
+    >
+      <table
+        aria-labelledby="tableTitle"
+        className="MuiTable-root makeStyles-table-3"
+      >
+        <thead
+          className="MuiTableHead-root"
+        >
+          <tr
+            className="MuiTableRow-root MuiTableRow-head"
+          >
+            <th
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-head MuiTableCell-alignLeft"
+              scope="col"
+            >
+              <span>
+                Product Name
+              </span>
+            </th>
+            <th
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight"
+              scope="col"
+            >
+              <span>
+                Item_Price
+              </span>
+            </th>
+            <th
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight"
+              scope="col"
+            >
+              <span>
+                Quantity
+              </span>
+            </th>
+            <th
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight"
+              scope="col"
+            >
+              <span>
+                Total
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          className="MuiTableBody-root"
+        >
+          <tr
+            className="MuiTableRow-root MuiTableRow-hover"
+            tabIndex={-1}
+          >
+            <th
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body"
+              id="enhanced-table-checkbox-0"
+              scope="row"
+            >
+              Gogh07
+            </th>
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight"
+            >
+              1000.00
+            </td>
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight"
+            >
+              2
+            </td>
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight"
+            >
+              2000.00
+            </td>
+          </tr>
+          <tr
+            className="MuiTableRow-root"
+          >
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body"
+              colSpan={2}
+            />
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignCenter"
+            >
+              <span>
+                SubTotal
+              </span>
+            </td>
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight"
+            >
+              2000.00
+            </td>
+          </tr>
+          <tr
+            className="MuiTableRow-root"
+          >
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body"
+              colSpan={2}
+            />
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignCenter"
+            >
+              <span>
+                Tax
+              </span>
+               (
+              0 %
+              )
+            </td>
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight"
+            >
+              30.00
+            </td>
+          </tr>
+          <tr
+            className="MuiTableRow-root"
+          >
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body"
+              colSpan={2}
+            />
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignCenter"
+            >
+              <span>
+                Total
+              </span>
+            </td>
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight"
+            >
+              2030.00
+            </td>
+          </tr>
+          <tr
+            className="MuiTableRow-root"
+            style={
+              Object {
+                "height": 120,
+              }
+            }
+          >
+            <td
+              aria-sort={null}
+              className="MuiTableCell-root MuiTableCell-body"
+              colSpan={6}
+            />
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      className="MuiTablePagination-root"
+    >
+      <div
+        className="MuiToolbar-root MuiToolbar-regular MuiTablePagination-toolbar MuiToolbar-gutters"
+      >
+        <div
+          className="MuiTablePagination-spacer"
+        />
+        <span
+          className="MuiTypography-root MuiTablePagination-caption MuiTypography-caption MuiTypography-colorInherit"
+        >
+          Rows per page:
+        </span>
+        <div
+          className="MuiInputBase-root MuiTablePagination-input MuiTablePagination-selectRoot"
+          onClick={[Function]}
+        >
+          <div
+            aria-haspopup="listbox"
+            className="MuiSelect-root MuiSelect-select MuiTablePagination-select MuiSelect-selectMenu MuiInputBase-input MuiInputBase-inputSelect"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            role="button"
+            tabIndex={0}
+          >
+            5
+          </div>
+          <input
+            type="hidden"
+            value={5}
+          />
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root MuiSelect-icon MuiTablePagination-selectIcon"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M7 10l5 5 5-5z"
+            />
+          </svg>
+        </div>
+        <span
+          className="MuiTypography-root MuiTablePagination-caption MuiTypography-caption MuiTypography-colorInherit"
+        >
+          1-1 of 1
+        </span>
+        <div
+          className="MuiTablePagination-actions"
+        >
+          <button
+            aria-label="Previous Page"
+            className="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit Mui-disabled Mui-disabled"
+            disabled={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={-1}
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
+                />
+              </svg>
+            </span>
+          </button>
+          <button
+            aria-label="Next Page"
+            className="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit Mui-disabled Mui-disabled"
+            disabled={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={-1}
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"
+                />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      className="MuiGrid-root MuiGrid-container"
+    >
+      <div
+        className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-12"
+      >
+        <h6
+          className="MuiTypography-root makeStyles-title-5 MuiTypography-h6 MuiTypography-gutterBottom"
+        >
+          <span>
+            Order Information
+          </span>
+        </h6>
+        <hr
+          className="MuiDivider-root"
+        />
+      </div>
+      <div
+        className="MuiGrid-root makeStyles-info-6 MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-3"
+      >
+        <div
+          className="MuiBox-root MuiBox-root-259"
+        >
+          <div
+            className="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12"
+          >
+            <span>
+              Shipping Address
+            </span>
+             
+          </div>
+          <div
+            className="MuiGrid-root makeStyles-add-7 MuiGrid-item MuiGrid-grid-sm-12"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiGrid-root makeStyles-info-6 MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-3"
+      >
+        <div
+          className="MuiBox-root MuiBox-root-260"
+        >
+          <div
+            className="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12"
+          >
+            <span>
+              Billing Address
+            </span>
+             
+          </div>
+          <div
+            className="MuiGrid-root makeStyles-add-7 MuiGrid-item MuiGrid-grid-sm-12"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiGrid-root makeStyles-info-6 MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-3"
+      >
+        <div
+          className="MuiBox-root MuiBox-root-261"
+        >
+          <div
+            className="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12"
+          >
+            <span>
+              Shipping Date
+            </span>
+             
+          </div>
+          <div
+            className="MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12"
+            style={
+              Object {
+                "paddingTop": "10px",
+              }
+            }
+          >
+            5/7/2019 10/7/2019
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

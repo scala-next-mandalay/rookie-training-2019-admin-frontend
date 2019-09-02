@@ -64,16 +64,17 @@ describe("Teting titlebar", () => {
       // cannot test becauseof  <Hidden /> but comment <Hidden/> the following testing work
 
       const ButtonArr = container.querySelectorAll('button');
-      //console.log('FirstBtns :',ButtonArr)
+      //console.log('HTML :',document.body.outerHTML);
         act(() => {
           ButtonArr[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
         });
-      const Button = document.querySelectorAll('button');
-      //console.log('AfterClicked :',Button)
+      //console.log('HTML :',document.body.outerHTML);
+      //const Button = container.querySelectorAll('Button');
+      //console.log('AfterClicked :',Button);
       //console.log('Buttons :',Button.length)
-        act(() => {
-          ButtonArr[2].dispatchEvent(new Event('click', { bubbles: true }));
-        });
+        // act(() => {
+        //   ButtonArr[2].dispatchEvent(new Event('click', { bubbles: true }));
+        // });
       
         // expect(signOut).toHaveBeenCalled();
         

@@ -18,6 +18,7 @@ const ForgotPassword = React.memo(({ authState, changeAuthState, loading, error,
     forgotPassword(form['email']);
   };
 
+
   const handleSignIn = event => {
     event.preventDefault();
     changeAuthState('signIn');

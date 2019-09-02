@@ -30,7 +30,8 @@ export const itemsReducer = (state = initialState, action) => {
     case 'ITEM_POST_DONE':
       return {
         ..._getCommonState(state),
-        rows: [...state.rows, action.payload],
+        rows: [...state.rows],
+        noMoreFetch:false,
       };
     case 'ITEM_PUT_DONE':
       return _item_put_done(state, action);
@@ -110,6 +111,7 @@ export const saveItem = (item,fileName, fileData) => {
       dispatch({
         type: 'ITEM_BEGIN_LOADING'
       });
+      
       if (!getState().auth.user) {
         return;
       }

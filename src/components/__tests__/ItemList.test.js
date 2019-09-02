@@ -156,7 +156,6 @@ const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prot
         inputArr[0].value = "WaLa";
         inputArr[1].value = 1000;
         SelectBox[1].value = 2;
-
         
         const CancelButton = document.querySelectorAll('button');
         act(() => {
@@ -211,18 +210,20 @@ const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prot
       //   });
         
         
-      //   //expect(inputArr[0].value).toBe("Merter05");
+      //   //expect(SelectBox[1].value).toBe("1");
       //   const SubmitButton = document.querySelectorAll('button');
       //   expect(SubmitButton[6].textContent.toUpperCase()).toBe("SUBMIT");
+      //   console.log('btn :',SubmitButton[6].textContent)
       //   act(() => {
-      //     SubmitButton[6].dispatchEvent(new Event('click', { bubbles: true }));
+      //     SubmitButton[6].dispatchEvent(new MouseEvent('click', { bubbles: true }));
       //   });
+      //   expect(saveItem).toHaveBeenCalled();
       //   const expectedItems = [
       //     { id: 1 , name: "ver" ,price: "4000", category_id: "1" },
       //     { id: 2,  name: "mer" ,price: "3000", category_id: "2" },
-      //     { id: null ,name: 'Merter05' ,price: "2000", category_id: "2" }
+      //     { id: null ,name: 'Merter05' ,price: "2000", category_id: "1" }
       //   ];
-      //   expect(saveItem).toHaveBeenCalled();
+        
       //   console.log('Items :',items);
       //   expect(items).toStrictEqual(expectedItems);
       // });

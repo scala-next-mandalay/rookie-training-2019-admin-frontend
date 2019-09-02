@@ -1,8 +1,10 @@
 /*global expect*/
 import { localeReducer, setLocale } from '../locale';
-//import mockAxios from "axios";
 
+//=============================================================================
 //Reducer testing
+//=============================================================================
+
 describe("locale reducer actions", () => {
   const initialState = {
     locale: 'en',

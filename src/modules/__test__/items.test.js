@@ -4,7 +4,10 @@ import { itemsReducer, fetchAllItems, deleteItem, saveItem, setCategoryId } from
 import mockAxios from "axios";
 import { Storage } from 'aws-amplify';
 
+//=============================================================================
 //Reducer testing
+//=============================================================================
+
 describe("item reducer actions", () => {
   const initialState = {
     alreadyFetched: false,
@@ -52,12 +55,11 @@ describe("item reducer actions", () => {
   
   it("item post done", () => {
     const action = {
-      type: 'ITEM_POST_DONE',
-      payload: { id: 1, name: "item1" }
+      type: 'ITEM_POST_DONE'
     };
     const expectedState = {
       ...initialState,
-      rows: [...initialState.rows, ...[{ id: 1, name: "item1" }]]
+      rows: [...initialState.rows]
     };
     const inputState = itemsReducer(initialState, action);
     expect(inputState).toEqual(expectedState);

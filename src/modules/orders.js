@@ -35,6 +35,7 @@ export const ordersReducer = (state = initialState, action) => {
 //=============================================================================
 
 export const fetchAllOrders = (num) => {
+  //console.log('num :',num);
   return async (dispatch, getState) => {
     if (!getState().auth.user) {
       return;
